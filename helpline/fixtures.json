@@ -1,0 +1,110 @@
+[
+  {
+    "id": "HT4102",
+    "dob": "1993-06-14",
+    "last4": "0042",
+    "customer_status": "ACTIVE",
+    "account": "A01",
+    "plan": "Basic",
+    "status": "ACTIVE",
+    "balance": 18420,
+    "channel": "Instant Pay",
+    "last_sent": ""
+  },
+  {
+    "id": "HT5103",
+    "dob": "1986-01-27",
+    "last4": "9017",
+    "customer_status": "ACTIVE",
+    "account": "A02",
+    "plan": "Premium",
+    "status": "ACTIVE",
+    "balance": 94750,
+    "channel": "BankWire",
+    "last_sent": ""
+  },
+  {
+    "id": "HT6314",
+    "dob": "1998-08-09",
+    "last4": "3310",
+    "customer_status": "BLOCKED",
+    "account": "A03",
+    "plan": "Basic",
+    "status": "ACTIVE",
+    "balance": 6500,
+    "channel": "Instant Pay",
+    "last_sent": ""
+  },
+  {
+    "id": "HT7405",
+    "dob": "1979-10-21",
+    "last4": "0088",
+    "customer_status": "ACTIVE",
+    "account": "A04",
+    "plan": "Basic",
+    "status": "FROZEN",
+    "balance": 8900,
+    "channel": "Instant Pay",
+    "last_sent": ""
+  },
+  {
+    "id": "HT8506",
+    "dob": "1991-02-02",
+    "last4": "7721",
+    "customer_status": "ACTIVE",
+    "account": "A05",
+    "plan": "Premium",
+    "status": "DORMANT",
+    "balance": 60350,
+    "channel": "Instant Pay",
+    "last_sent": ""
+  },
+  {
+    "id": "HT9607",
+    "dob": "2000-12-30",
+    "last4": "0403",
+    "customer_status": "ACTIVE",
+    "account": "A06",
+    "plan": "Basic",
+    "status": null,
+    "balance": 5020,
+    "channel": "Instant Pay",
+    "last_sent": ""
+  },
+  {
+    "id": "HT1708",
+    "dob": "1987-05-18",
+    "last4": "2135",
+    "customer_status": "ACTIVE",
+    "account": "A07",
+    "plan": "Premium",
+    "status": "ACTIVE",
+    "balance": 23000,
+    "channel": "BankWire",
+    "last_sent": "2026-11-10"
+  },
+  {
+    "id": "HT2809",
+    "dob": "1995-04-11",
+    "last4": "8493",
+    "customer_status": "ACTIVE",
+    "account": null,
+    "plan": null,
+    "status": null,
+    "balance": null,
+    "channel": null,
+    "last_sent": null
+  },
+  {
+    "id": "HT3901",
+    "dob": "2001-09-07",
+    "last4": "3000",
+    "customer_status": "ACTIVE",
+    "account": "A09",
+    "plan": "Basic",
+    "status": "ACTIVE",
+    "balance": 0,
+    "channel": "Instant Pay",
+    "last_sent": "2026-11-09"
+  }
+]

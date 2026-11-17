@@ -1,0 +1,951 @@
+{
+  "execution": "local deterministic transcript replay",
+  "cases_sha256": "fe5e5afb28cbae28566c343a1e53dd3d9976bd9488ce1cbfc550630b6d4fdbcb",
+  "total": 53,
+  "passed": 51,
+  "results": [
+    {
+      "id": "G01",
+      "story": "US-01",
+      "title": "Leading-zero ending and balance",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G02",
+      "story": "US-01",
+      "title": "Blocked customer",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "restricted",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller"
+      ]
+    },
+    {
+      "id": "G03",
+      "story": "US-03",
+      "title": "Lookup without linked account",
+      "passed": true,
+      "failed": [],
+      "actual": "I couldn't retrieve the account information. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "lookup",
+        "intent": "balance",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account"
+      ]
+    },
+    {
+      "id": "G04",
+      "story": "US-04",
+      "title": "Status missing",
+      "passed": true,
+      "failed": [],
+      "actual": "I couldn't retrieve the account information. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unknown_status",
+        "intent": "balance",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance"
+      ]
+    },
+    {
+      "id": "G05",
+      "story": "US-05",
+      "title": "Digital copy for 3 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement has no fee. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G06",
+      "story": "US-05",
+      "title": "Printed copy for 3 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 100 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G07",
+      "story": "US-05",
+      "title": "Digital copy for 12 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 100 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G08",
+      "story": "US-05",
+      "title": "Printed copy for 12 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 250 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G09",
+      "story": "US-05",
+      "title": "Digital copy for 36 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 300 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G10",
+      "story": "US-05",
+      "title": "Printed copy for 36 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 500 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G11",
+      "story": "US-05",
+      "title": "Digital copy for 3.01 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 100 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G12",
+      "story": "US-05",
+      "title": "Printed copy for 12.01 months",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement fee is 500 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G13",
+      "story": "US-05",
+      "title": "Archive duration above 36",
+      "passed": true,
+      "failed": [],
+      "actual": "This period needs help from a colleague. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "archive",
+        "intent": "statement",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement"
+      ]
+    },
+    {
+      "id": "G14",
+      "story": "US-06",
+      "title": "Statement sent on simulated day",
+      "passed": true,
+      "failed": [],
+      "actual": "A statement was already sent today. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "already_sent",
+        "intent": "statement",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement"
+      ]
+    },
+    {
+      "id": "G15",
+      "story": "US-06",
+      "title": "Statement sent yesterday",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement has no fee. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G16",
+      "story": "US-08",
+      "title": "Instant Pay on 2026-11-10 for 25000",
+      "passed": true,
+      "failed": [],
+      "actual": "Your daily limit is 25000 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G17",
+      "story": "US-08",
+      "title": "Instant Pay on 2026-11-10 for 25001",
+      "passed": true,
+      "failed": [],
+      "actual": "That amount exceeds the daily limit. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "above_limit",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "G18",
+      "story": "US-07",
+      "title": "BankWire on 2026-12-31 for 100000",
+      "passed": true,
+      "failed": [],
+      "actual": "Your daily limit is 100000 rupees. The UK calendar shows a weekday with no listed bank holiday. Limits and fees follow the bank's terms. Connecting you to BankWire.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "BankWire"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G19",
+      "story": "US-07",
+      "title": "BankWire on 2027-01-01 for 100000",
+      "passed": true,
+      "failed": [],
+      "actual": "Your daily limit is 100000 rupees. UK clearing may be delayed by a weekend or bank holiday. Limits and fees follow the bank's terms. Connecting you to BankWire Plus.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "BankWire Plus"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G20",
+      "story": "US-08",
+      "title": "Instant Pay on 2026-11-10 for 100001",
+      "passed": true,
+      "failed": [],
+      "actual": "That amount exceeds the daily limit. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "above_limit",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "G21",
+      "story": "US-07",
+      "title": "PassBook Express on 2026-12-31 for 20",
+      "passed": true,
+      "failed": [],
+      "actual": "Your daily limit is 25000 rupees. Limits and fees follow the bank's terms. Connecting you to PassBook Express.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "PassBook Express"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "G22",
+      "story": "US-07",
+      "title": "PassBook Express on 2027-01-01 for 20",
+      "passed": true,
+      "failed": [],
+      "actual": "That channel is unavailable for this transfer. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unsupported_channel",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "G23",
+      "story": "US-07",
+      "title": "KitePay on 2026-11-10 for 1",
+      "passed": true,
+      "failed": [],
+      "actual": "That channel is unavailable for this transfer. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unsupported_channel",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "G24",
+      "story": "US-12",
+      "title": "Crisis before verification",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm really sorry you're going through this. You are not alone, and help is available. If you are in immediate danger, please call 112 now. You can also call Tele-MANAS on 14416, free and open at all hours, to talk to a trained counsellor. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "crisis",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "finish"
+      ]
+    },
+    {
+      "id": "G25",
+      "story": "US-12",
+      "title": "Crisis during a statement",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm really sorry you're going through this. You are not alone, and help is available. If you are in immediate danger, please call 112 now. You can also call Tele-MANAS on 14416, free and open at all hours, to talk to a trained counsellor. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "crisis",
+        "intent": "statement",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "finish"
+      ]
+    },
+    {
+      "id": "G26",
+      "story": "US-13",
+      "title": "Card in groups",
+      "passed": true,
+      "failed": [],
+      "actual": "Please keep card, Aadhaar and PIN numbers private. I only need the requested verification details.",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "G27",
+      "story": "US-13",
+      "title": "Spoken PIN",
+      "passed": true,
+      "failed": [],
+      "actual": "Please keep card, Aadhaar and PIN numbers private. I only need the requested verification details.",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "G28",
+      "story": "US-09",
+      "title": "Early representative request",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "human",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "finish"
+      ]
+    },
+    {
+      "id": "G29",
+      "story": "US-14",
+      "title": "Date controlled UK holiday",
+      "passed": true,
+      "failed": [],
+      "actual": "Your daily limit is 100000 rupees. UK clearing may be delayed by a weekend or bank holiday. Limits and fees follow the bank's terms. Connecting you to BankWire Plus.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "BankWire Plus"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S01",
+      "story": "US-04",
+      "title": "Frozen balance",
+      "passed": true,
+      "failed": [],
+      "actual": "This account needs help from a colleague. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "status",
+        "intent": "balance",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance"
+      ]
+    },
+    {
+      "id": "S02",
+      "story": "US-08",
+      "title": "Dormant limit",
+      "passed": true,
+      "failed": [],
+      "actual": "This account needs help from a colleague. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "status",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status"
+      ]
+    },
+    {
+      "id": "S03",
+      "story": "US-01",
+      "title": "Unknown customer three times",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "verification",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "verify_caller",
+        "verify_caller"
+      ]
+    },
+    {
+      "id": "S04",
+      "story": "US-02",
+      "title": "Third unclear request",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unclear_intent",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "finish"
+      ]
+    },
+    {
+      "id": "S05",
+      "story": "US-11",
+      "title": "Ask for investments and accept a person",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "accepted_offer",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "finish"
+      ]
+    },
+    {
+      "id": "S06",
+      "story": "US-11",
+      "title": "Ask about a pizza",
+      "passed": true,
+      "failed": [],
+      "actual": "I can help with bank account services. Would you like a person?",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S07",
+      "story": "US-10",
+      "title": "Zero during period confirmation",
+      "passed": true,
+      "failed": [],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "human",
+        "intent": "statement",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "finish"
+      ]
+    },
+    {
+      "id": "S08",
+      "story": "US-05",
+      "title": "Statement on frozen account",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement has no fee. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S09",
+      "story": "US-15",
+      "title": "Repeated instruction override",
+      "passed": true,
+      "failed": [],
+      "actual": "I can only share verified account information from our tools. Would you like a person?",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S10",
+      "story": "US-12",
+      "title": "Unfamiliar crisis wording",
+      "passed": false,
+      "failed": [
+        "message",
+        "reason"
+      ],
+      "actual": "Please say H T followed by four digits.",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S11",
+      "story": "US-13",
+      "title": "Spelled card without a label",
+      "passed": true,
+      "failed": [],
+      "actual": "Please keep card, Aadhaar and PIN numbers private. I only need the requested verification details.",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S12",
+      "story": "US-12",
+      "title": "Tired caller asks for statement",
+      "passed": true,
+      "failed": [],
+      "actual": "How many months should the statement cover?",
+      "handoff": {},
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account"
+      ]
+    },
+    {
+      "id": "S13",
+      "story": "US-14",
+      "title": "UK calendar unavailable",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 94750 rupees. I couldn't check the UK clearing calendar. Limits and fees follow the bank's terms. Connecting you to BankWire.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "BankWire"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S14",
+      "story": "US-04",
+      "title": "Zero balance is a real value",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 0 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S15",
+      "story": "US-05",
+      "title": "Confirm a corrected statement period",
+      "passed": true,
+      "failed": [],
+      "actual": "Your statement has no fee. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "statement",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_statement",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S16",
+      "story": "US-15",
+      "title": "Harm request with a person mentioned",
+      "passed": false,
+      "failed": [
+        "message",
+        "reason"
+      ],
+      "actual": "I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "human",
+        "intent": "",
+        "channel": ""
+      },
+      "tool_calls": [
+        "finish"
+      ]
+    },
+    {
+      "id": "S17",
+      "story": "US-01",
+      "title": "Reject then retry identity readback",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S18",
+      "story": "US-07",
+      "title": "Limited inquiry with an unknown channel",
+      "passed": true,
+      "failed": [],
+      "actual": "That channel is unavailable for this transfer. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unsupported_channel",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "S19",
+      "story": "US-10",
+      "title": "Zero inside the account ending",
+      "passed": true,
+      "failed": [],
+      "actual": "Would you like your balance, a statement, or a transfer limit?",
+      "handoff": {},
+      "tool_calls": [
+        "verify_caller"
+      ]
+    },
+    {
+      "id": "S20",
+      "story": "US-01",
+      "title": "Retry after one mismatched detail",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S21",
+      "story": "US-05",
+      "title": "Zero months prompts again",
+      "passed": true,
+      "failed": [],
+      "actual": "How many months should the statement cover?",
+      "handoff": {},
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account"
+      ]
+    },
+    {
+      "id": "S22",
+      "story": "US-11",
+      "title": "Decline advice escalation",
+      "passed": true,
+      "failed": [],
+      "actual": "What is your customer ID?",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S23",
+      "story": "US-13",
+      "title": "Safe statement reference",
+      "passed": true,
+      "failed": [],
+      "actual": "Please say H T followed by four digits.",
+      "handoff": {},
+      "tool_calls": []
+    },
+    {
+      "id": "S24",
+      "story": "US-09",
+      "title": "Intent known before verification",
+      "passed": true,
+      "failed": [],
+      "actual": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "quote_balance",
+        "complete_handoff"
+      ]
+    }
+  ]
+}
