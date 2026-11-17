@@ -4,7 +4,7 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
-Select **Run example call** in the browser demo to see the verification and balance handoff, or open **Regression suite** to run the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
+[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
 
 | File | Contents |
 | --- | --- |

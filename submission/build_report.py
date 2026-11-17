@@ -1,5 +1,6 @@
 """Generate the capstone PDF from recorded local evidence. Run from the project root."""
 import json
+from io import BytesIO
 from pathlib import Path
 from xml.sax.saxutils import escape
 from reportlab.lib.colors import HexColor
@@ -11,6 +12,7 @@ from reportlab.graphics import renderPDF, renderSVG
 from reportlab.graphics.shapes import Drawing, Rect, String
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
+from pypdf import PdfWriter
 from evaluation.catalog import CASES, ROOT, STORIES
 
 OUT=ROOT/"submission"/"Capstone10_Report.pdf"
@@ -212,6 +214,7 @@ def screenshot_page(number, title, intro, file, caption, detail):
     y=para(left,y,usable,caption,10,14,bold=True)-10
     y=para(left,y,usable,detail,10,14)-12
     link(left,y,"Open the original screenshot","https://github.com/Sahil-2006/Bank-Account-Services-Voice-Helpline/blob/main/evidence/browser/"+file)
+    link(left,y-17,"Open the live browser demonstration","https://harbour-trust-voice-capstone-10.vercel.app/")
     footing(number)
 
 screenshot_page(8,"Verified balance handoff",
@@ -219,7 +222,7 @@ screenshot_page(8,"Verified balance handoff",
     "balance-handoff.jpg","Figure 1. The desk returned 18,420 rupees and recorded an Instant Pay handoff tagged balance.",
     "The screenshot captures the completed conversation and routing result. The call used typed inputs. A separate privacy probe in the repository records the desk withholding a PIN given as digit words.")
 screenshot_page(9,"Observed regression pass rates",
-    "Both packaged builds ran against all 53 fixed transcripts inside a fresh browser interpreter. The screenshot was captured after the run completed. The figures match the repository's independent local replay.",
+    "Both packaged builds ran against all 53 fixed transcripts in the public browser demo. This screenshot was captured on the production site after the run completed. The figures match the independent local replay.",
     "regression-results.jpg","Figure 2. V1 passed 51 of 53 cases (96.2%). V2 passed 53 of 53 (100.0%).",
     "V1 missed the crisis wording in S10 and routed the harm request in S16 to a representative. V2 passed both cases and retained the other 51 passes. These percentages measure deterministic transcript replay. Google-hosted Evaluate rates have yet to be measured.")
 
@@ -262,4 +265,9 @@ y=sub(y,"Evidence required by the assignment")
 note(y,"Section 10 requires full-screen captures with the team's agent names visible. Use the actual Versions pane and both completed Evaluate result screens. Section 7 also requires five spoken calls in the team's own console.")
 footing(10)
 c.save()
+writer=PdfWriter(clone_from=BytesIO(OUT.read_bytes()))
+for image_path in sorted((ROOT/"evidence"/"browser").glob("*.jpg")):
+    writer.add_attachment(image_path.name,image_path.read_bytes())
+with OUT.open("wb") as target:
+    writer.write(target)
 print(OUT)
