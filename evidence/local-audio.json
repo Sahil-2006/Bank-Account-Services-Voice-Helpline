@@ -1,0 +1,476 @@
+{
+  "method": "Synthetic Windows speech synthesis to PCM, local Windows ASR and local desk. No cloud console or microphone was used.",
+  "recognition": [
+    {
+      "mode": "dictation",
+      "said": "H T four one zero two",
+      "heard": "",
+      "file": "in-0.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "June fourteenth nineteen ninety three",
+      "heard": "June 14, 1993",
+      "file": "in-1.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "zero zero four two",
+      "heard": "0042",
+      "file": "in-2.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "yes",
+      "heard": "yes",
+      "file": "in-3.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "balance",
+      "heard": "balance",
+      "file": "in-4.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "zero",
+      "heard": "zero",
+      "file": "in-5.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "representative",
+      "heard": "Brett presented if",
+      "file": "in-6.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "I do not want to live anymore",
+      "heard": "I do not want to live anymore",
+      "file": "in-7.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "statement",
+      "heard": "statement",
+      "file": "in-8.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "I am so tired",
+      "heard": "I am so tired",
+      "file": "in-9.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "four five three two",
+      "heard": "4532",
+      "file": "in-10.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "three",
+      "heard": "",
+      "file": "in-11.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "twelve",
+      "heard": "12",
+      "file": "in-12.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "digital",
+      "heard": "digital",
+      "file": "in-13.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "no",
+      "heard": "now",
+      "file": "in-14.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "one",
+      "heard": "",
+      "file": "in-15.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "two",
+      "heard": "",
+      "file": "in-16.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "limit",
+      "heard": "limit",
+      "file": "in-17.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "agent",
+      "heard": "agent",
+      "file": "in-18.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "someone",
+      "heard": "",
+      "file": "in-19.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "printed",
+      "heard": "",
+      "file": "in-20.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "what can you do",
+      "heard": "what can you do",
+      "file": "in-21.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "H T four one zero two (noise)",
+      "heard": "",
+      "file": "noisy.wav"
+    },
+    {
+      "mode": "dictation",
+      "said": "representative (while agent speaks)",
+      "heard": "",
+      "file": "overlap.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "H T four one zero two",
+      "heard": "H T four one zero two",
+      "file": "in-0.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "June fourteenth nineteen ninety three",
+      "heard": "June 14, 1993",
+      "file": "in-1.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "zero zero four two",
+      "heard": "zero zero four two",
+      "file": "in-2.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "yes",
+      "heard": "yes",
+      "file": "in-3.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "balance",
+      "heard": "balance",
+      "file": "in-4.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "zero",
+      "heard": "zero",
+      "file": "in-5.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "representative",
+      "heard": "representative",
+      "file": "in-6.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "I do not want to live anymore",
+      "heard": "I do not want to live anymore",
+      "file": "in-7.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "statement",
+      "heard": "statement",
+      "file": "in-8.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "I am so tired",
+      "heard": "I am so tired",
+      "file": "in-9.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "four five three two",
+      "heard": "four five three two",
+      "file": "in-10.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "three",
+      "heard": "",
+      "file": "in-11.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "twelve",
+      "heard": "",
+      "file": "in-12.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "digital",
+      "heard": "digital",
+      "file": "in-13.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "no",
+      "heard": "no",
+      "file": "in-14.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "one",
+      "heard": "",
+      "file": "in-15.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "two",
+      "heard": "",
+      "file": "in-16.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "limit",
+      "heard": "limit",
+      "file": "in-17.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "agent",
+      "heard": "agent",
+      "file": "in-18.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "someone",
+      "heard": "someone",
+      "file": "in-19.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "printed",
+      "heard": "printed",
+      "file": "in-20.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "what can you do",
+      "heard": "what can you do",
+      "file": "in-21.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "H T four one zero two (noise)",
+      "heard": "",
+      "file": "noisy.wav"
+    },
+    {
+      "mode": "service vocabulary",
+      "said": "representative (while agent speaks)",
+      "heard": "",
+      "file": "overlap.wav"
+    }
+  ],
+  "calls": [
+    {
+      "name": "Clean balance call",
+      "turns": [
+        {
+          "file": "in-0.wav",
+          "said": "H T four one zero two",
+          "heard": "H T four one zero two",
+          "reply": "What is your date of birth?"
+        },
+        {
+          "file": "in-1.wav",
+          "said": "June fourteenth nineteen ninety three",
+          "heard": "June 14, 1993",
+          "reply": "What are the last four account digits?"
+        },
+        {
+          "file": "in-2.wav",
+          "said": "zero zero four two",
+          "heard": "zero zero four two",
+          "reply": "I heard H T four one zero two, ending zero zero four two. Is that right?"
+        },
+        {
+          "file": "in-3.wav",
+          "said": "yes",
+          "heard": "yes",
+          "reply": "Would you like your balance, a statement, or a transfer limit?"
+        },
+        {
+          "file": "in-4.wav",
+          "said": "balance",
+          "heard": "balance",
+          "reply": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay."
+        }
+      ],
+      "passed": true,
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      }
+    },
+    {
+      "name": "Noisy ID then clean retry",
+      "turns": [
+        {
+          "file": "noisy.wav",
+          "said": "H T four one zero two (noise)",
+          "heard": "",
+          "reply": "Take your time. What is your customer ID?"
+        },
+        {
+          "file": "in-0.wav",
+          "said": "H T four one zero two",
+          "heard": "H T four one zero two",
+          "reply": "What is your date of birth?"
+        },
+        {
+          "file": "in-1.wav",
+          "said": "June fourteenth nineteen ninety three",
+          "heard": "June 14, 1993",
+          "reply": "What are the last four account digits?"
+        },
+        {
+          "file": "in-2.wav",
+          "said": "zero zero four two",
+          "heard": "zero zero four two",
+          "reply": "I heard H T four one zero two, ending zero zero four two. Is that right?"
+        },
+        {
+          "file": "in-3.wav",
+          "said": "yes",
+          "heard": "yes",
+          "reply": "Would you like your balance, a statement, or a transfer limit?"
+        },
+        {
+          "file": "in-4.wav",
+          "said": "balance",
+          "heard": "balance",
+          "reply": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay."
+        }
+      ],
+      "passed": true,
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "balance",
+        "channel": "Instant Pay"
+      }
+    },
+    {
+      "name": "Interrupt with representative",
+      "turns": [
+        {
+          "file": "in-0.wav",
+          "said": "H T four one zero two",
+          "heard": "H T four one zero two",
+          "reply": "What is your date of birth?"
+        },
+        {
+          "file": "in-1.wav",
+          "said": "June fourteenth nineteen ninety three",
+          "heard": "June 14, 1993",
+          "reply": "What are the last four account digits?"
+        },
+        {
+          "file": "overlap.wav",
+          "said": "representative (while agent speaks)",
+          "heard": "",
+          "reply": "Take your time. What are the last four account digits?"
+        }
+      ],
+      "passed": false,
+      "handoff": {}
+    },
+    {
+      "name": "Zero during statement",
+      "turns": [
+        {
+          "file": "in-0.wav",
+          "said": "H T four one zero two",
+          "heard": "H T four one zero two",
+          "reply": "What is your date of birth?"
+        },
+        {
+          "file": "in-1.wav",
+          "said": "June fourteenth nineteen ninety three",
+          "heard": "June 14, 1993",
+          "reply": "What are the last four account digits?"
+        },
+        {
+          "file": "in-2.wav",
+          "said": "zero zero four two",
+          "heard": "zero zero four two",
+          "reply": "I heard H T four one zero two, ending zero zero four two. Is that right?"
+        },
+        {
+          "file": "in-3.wav",
+          "said": "yes",
+          "heard": "yes",
+          "reply": "Would you like your balance, a statement, or a transfer limit?"
+        },
+        {
+          "file": "in-8.wav",
+          "said": "statement",
+          "heard": "statement",
+          "reply": "How many months should the statement cover?"
+        },
+        {
+          "file": "in-5.wav",
+          "said": "zero",
+          "heard": "zero",
+          "reply": "I'm connecting you with a person now."
+        }
+      ],
+      "passed": true,
+      "handoff": {
+        "destination": "human",
+        "reason": "human",
+        "intent": "statement",
+        "channel": ""
+      }
+    },
+    {
+      "name": "Crisis at entry",
+      "turns": [
+        {
+          "file": "in-7.wav",
+          "said": "I do not want to live anymore",
+          "heard": "I do not want to live anymore",
+          "reply": "I'm really sorry you're going through this. You are not alone, and help is available. If you are in immediate danger, please call 112 now. You can also call Tele-MANAS on 14416, free and open at all hours, to talk to a trained counsellor. I'm connecting you with a person now."
+        }
+      ],
+      "passed": true,
+      "handoff": {
+        "destination": "human",
+        "reason": "crisis",
+        "intent": "",
+        "channel": ""
+      }
+    }
+  ]
+}

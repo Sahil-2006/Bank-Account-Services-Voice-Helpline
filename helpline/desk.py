@@ -2,6 +2,7 @@
 import re
 from datetime import date, datetime
 from decimal import Decimal
+from .speech import date_words, spoken_int
 from .policy import (ADVICE, CRISIS, HUMAN, OUTSIDE, PRIVATE, SAFE, TERMS, as_digits, classify, clean,
                      compact_digits, intent_of, number_tokens, positive, safe_output, uk_advisory)
 from .tools import (check_limit, complete_handoff, finish, fresh, human_message, lookup_account,
@@ -20,6 +21,12 @@ def parse_day(text):
     for fmt in ("%Y-%m-%d","%d/%m/%Y","%d %B %Y","%B %d %Y","%d %b %Y"):
         try:
             return datetime.strptime(text.replace(",","").strip(),fmt).date().isoformat()
+        except ValueError:
+            pass
+    normalized = date_words(text)
+    if normalized:
+        try:
+            return date.fromisoformat(normalized).isoformat()
         except ValueError:
             pass
     return ""
@@ -139,7 +146,10 @@ class Desk:
             if value in ("limit only","just the limit","read the limit"):
                 value = ""
             if value and positive(value) is None:
-                return ASK["amount"]
+                n = spoken_int(value)
+                if n is None or n <= 0:
+                    return ASK["amount"]
+                value = str(n)
             self.run_tool(check_limit,self.rows,value,s["input_channel"],s["transfer_date"])
             return self.deliver()
         return current_prompt(s)
@@ -151,16 +161,22 @@ class Desk:
                 s["intent_tag"] = intent_of(text)
             key = compact_digits(text).upper()
             if not re.fullmatch(r"HT\d{4}",key):
+                if not intent_of(text) and self.invalid_identity_entry():
+                    return HUMAN
                 return "Please say H T followed by four digits."
             s.update(candidate=key,stage="dob")
         elif stage == "dob":
             day = parse_day(text)
             if day:
                 s.update(dob=day,stage="ending")
+            elif self.invalid_identity_entry():
+                return HUMAN
         elif stage == "ending":
             tail = compact_digits(text)
             if re.fullmatch(r"\d{4}",tail):
                 s.update(ending=tail,stage="confirm_id")
+            elif self.invalid_identity_entry():
+                return HUMAN
         else:
             if text in NO:
                 s.update(candidate="",ending="",dob="",stage="id")
@@ -173,9 +189,18 @@ class Desk:
                     return MENU
                 if result == "human":
                     return HUMAN
+                if result == "technical":
+                    return human_message(s) + " " + HUMAN
                 s.update(stage="id",ending="")
                 return "I couldn't verify those details. " + ASK["id"]
         return current_prompt(s)
+
+    def invalid_identity_entry(self):
+        self.s["attempts"] += 1
+        if self.s["attempts"] >= 3:
+            self.run_tool(finish,"human","verification")
+            return True
+        return False
 
     def deliver(self):
         s = self.s

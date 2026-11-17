@@ -21,7 +21,11 @@ def verify_caller(s, directory, customer_id, dob, last_four):
     if s["verified"]:
         return {"result":"verified"}
     key = compact_digits(customer_id).upper()
-    rows = [r for r in directory if r["id"] == key and r["dob"] == dob and r["last4"] == compact_digits(last_four)]
+    try:
+        rows = [r for r in directory if r["id"] == key and r["dob"] == dob and r["last4"] == compact_digits(last_four)]
+    except (OSError, TypeError, KeyError):
+        finish(s,"human","lookup")
+        return {"result":"technical"}
     s["attempts"] += 1
     if len(rows) == 1 and rows[0]["customer_status"] == "ACTIVE":
         s.update(verified=True, customer_id=key, ending=rows[0]["last4"], stage="service")
@@ -37,8 +41,11 @@ def verify_caller(s, directory, customer_id, dob, last_four):
 def lookup_account(s, directory):
     if not s["verified"] or s["handoff"]:
         return {}
-    row = next((r for r in directory if r["id"] == s["customer_id"]), None)
-    if not row or not row["account"]:
+    try:
+        row = next((r for r in directory if r["id"] == s["customer_id"]), None)
+    except (OSError, TypeError, KeyError):
+        row = None
+    if not row or not row.get("account"):
         finish(s,"human","lookup")
         return {}
     s["account_type"] = row["plan"] or ""

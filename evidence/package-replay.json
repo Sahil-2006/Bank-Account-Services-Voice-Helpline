@@ -1,0 +1,17 @@
+[
+  {
+    "package": "HarbourTrust-V1.zip",
+    "cases": 53,
+    "passed": 51,
+    "failures": [
+      "S10",
+      "S16"
+    ]
+  },
+  {
+    "package": "HarbourTrust-V2.zip",
+    "cases": 53,
+    "passed": 53,
+    "failures": []
+  }
+]

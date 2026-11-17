@@ -27,8 +27,10 @@ def compact_digits(text):
 
 def classify(text):
     t = clean(text)
-    if re.search(r"\b(?:suicidal|suicide|kill myself|end my life|hurt myself|harm myself|take my own life|don't want to (?:live|be alive)|do not want to live|can't keep myself safe)\b", t):
+    if re.search(r"\b(?:suicidal|suicide|kill myself|end my life|hurt myself|harm myself|tak(?:e|ing) my own life|don't want to (?:live|be alive)|do not want to live|can't keep myself safe)\b", t):
         return "crisis"
+    if re.search(r"\bhow (?:can|do) i (?:hurt|harm|attack) (?:someone|a person|people)\b", t):
+        return "harm"
     if re.fullmatch(r"(?:please\s+)?(?:0|zero)[.!?]?", t) or re.search(r"\b(?:agent|representative|someone|human|real person|a person)\b", t):
         return "human"
     numbers = number_tokens(t)
@@ -36,8 +38,6 @@ def classify(text):
         return "private"
     if re.search(r"\b(?:ignore|override|disregard)\b.*\b(?:instructions|rules|system)\b|\breveal (?:the |your )?system prompt\b", t):
         return "prompt"
-    if re.search(r"\bhow (?:can|do) i (?:hurt|harm|attack) (?:someone|a person|people)\b", t):
-        return "harm"
     if re.search(r"\b(?:invest|investment advice|buy stocks|sell shares|which stock|best mutual fund|should i borrow)\b", t):
         return "advice"
     if re.search(r"\b(?:weather|recipe|pizza|football|flight|movie|train ticket)\b", t):
@@ -93,7 +93,11 @@ def safe_output(text, allowed_money=()):
         return text
     if re.search(r"(?:\d[\s,-]*){12,}",number_tokens(text)) or re.search(r"\b(?:you should (?:buy|invest|sell)|i recommend investing)\b",clean(text)):
         return SAFE
+    numbers = number_tokens(text)
+    if re.search(r"\b(?:account (?:number|ending)|account ends in)\D{0,12}(?:\d[\s-]*){5,}", numbers):
+        return SAFE
     amounts = re.findall(r"\b([\d,]+(?:\.\d+)?)\s+rupees\b",text.lower())
+    amounts += re.findall(r"(?:₹|\b(?:rs\.?|inr|rupees)\s+)\s*([\d,]+(?:\.\d+)?)",text.lower())
     if any(Decimal(v.replace(",", "")) not in allowed_money for v in amounts):
         return SAFE
     return text
