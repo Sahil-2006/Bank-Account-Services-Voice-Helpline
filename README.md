@@ -4,11 +4,11 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
-[Open the browser demo](https://sahil-2006.github.io/Bank-Account-Services-Voice-Helpline/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to run the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
+Select **Run example call** in the browser demo to see the verification and balance handoff, or open **Regression suite** to run the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
 
 | File | Contents |
 | --- | --- |
-| [Project report](submission/Capstone10_Report.pdf) | Seven pages covering architecture, traceability, every evaluation case, failures, fixes, guardrail probes, voice transcripts and limitations. |
+| [Project report](submission/Capstone10_Report.pdf) | Ten pages covering architecture, traceability, evaluation, guardrails, voice transcripts and limitations. Pages 8 and 9 contain genuine browser screenshots. Page 10 illustrates the three outstanding Studio captures. |
 | [Requirements and Test Data](submission/Requirements%20and%20Test%20Data.xlsx) | The template headings, 15 user stories, 48 edge cases, 55 fictional data rows and coverage checks. |
 | [Team contribution note](submission/Contribution-note.md) | Four editable paragraphs awaiting the actual roster and individual contributions. |
 | [Offline backup video](demo/HarbourTrust-offline.mp4) | A 49-second narrated balance call using actual local speech-recognition results and a fictional customer. For demo backup. |

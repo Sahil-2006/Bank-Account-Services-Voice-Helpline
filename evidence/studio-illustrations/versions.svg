@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="511.27559055118115" height="133" preserveAspectRatio="xMinYMin meet" viewBox="0 0 511 133" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="511.27559055118115" height="133"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-133)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="511.27559055118115" height="133" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(94%,96%,95%); fill-rule: evenodd;"/>
+			<rect x="0" y="105" width="511.27559055118115" height="28" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,29%,28%); fill-rule: evenodd;"/>
+			<text x="12" y="115" style="font-family: Helvetica-Bold; font-size: 8px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,230) scale(1,-1)">STUDIO EVIDENCE GUIDE</text>
+			<text x="342.27559055118115" y="115" style="font-family: Helvetica-Bold; font-size: 8px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,230) scale(1,-1)">ILLUSTRATION  /  NO HOSTED RUN</text>
+			<text x="12" y="84" style="font-family: Helvetica-Bold; font-size: 14px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,168) scale(1,-1)">Versions</text>
+			<text x="12" y="66" style="font-family: Helvetica-Bold; font-size: 8.3px;fill: rgb(0%,43%,44%); stroke:none;" transform="translate(0,132) scale(1,-1)">Version label</text>
+			<text x="181" y="66" style="font-family: Helvetica-Bold; font-size: 8.3px;fill: rgb(0%,43%,44%); stroke:none;" transform="translate(0,132) scale(1,-1)">Application</text>
+			<text x="354" y="66" style="font-family: Helvetica-Bold; font-size: 8.3px;fill: rgb(0%,43%,44%); stroke:none;" transform="translate(0,132) scale(1,-1)">Native record</text>
+			<text x="12" y="47" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,94) scale(1,-1)">Team&lt;NN&gt;-V1</text>
+			<text x="181" y="47" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,94) scale(1,-1)">Harbour Trust Voice Desk</text>
+			<text x="354" y="47" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,94) scale(1,-1)">Awaiting capture</text>
+			<text x="12" y="30" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,60) scale(1,-1)">Team&lt;NN&gt;-V2</text>
+			<text x="181" y="30" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,60) scale(1,-1)">Harbour Trust Voice Desk</text>
+			<text x="354" y="30" style="font-family: Helvetica; font-size: 9.4px;fill: rgb(6%,16%,21%); stroke:none;" transform="translate(0,60) scale(1,-1)">Awaiting capture</text>
+			<rect x="0" y="0" width="511.27559055118115" height="17" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(87%,91%,89%); fill-rule: evenodd;"/>
+			<text x="12" y="5" style="font-family: Helvetica; font-size: 8px;fill: rgb(32%,39%,43%); stroke:none;" transform="translate(0,10) scale(1,-1)">A real console capture is still required for this view.</text>
+		</g>
+	</g>
+</svg>

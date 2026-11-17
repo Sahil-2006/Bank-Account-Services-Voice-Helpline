@@ -5,7 +5,10 @@ from xml.sax.saxutils import escape
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.utils import ImageReader
 from reportlab.lib.utils import simpleSplit
+from reportlab.graphics import renderPDF, renderSVG
+from reportlab.graphics.shapes import Drawing, Rect, String
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
 from evaluation.catalog import CASES, ROOT, STORIES
@@ -33,7 +36,7 @@ def head(n,title,desc):
 def footing(i):
     c.setStrokeColor(rgb(line));c.line(left,39,right,39)
     txt(left,24,"BUILDING AI AGENTS FOR DIGITAL CUSTOMER EXPERIENCE SYSTEMS",7.2,"Helvetica",grey)
-    c.setFont("Helvetica-Bold",8);c.drawRightString(right,24,str(i)+" / 7");c.showPage()
+    c.setFont("Helvetica-Bold",8);c.drawRightString(right,24,str(i)+" / 10");c.showPage()
 def sub(y,name):
     txt(left,y-13,name,13,"Helvetica-Bold",teal);return y-24
 def table(y,cols,headers,rows,fs=9,lh=12,pad=5):
@@ -92,7 +95,8 @@ y-=84
 y=sub(y,"Controls shared by both agents")
 y=para(left,y,usable,"A check on user input screens private numbers and crisis language. Output policy checks account endings, monetary claims and advice. Model safety and prompt security add two provider controls. A callback records destination, reason, intent and channel.",10,14)-13
 y=para(left,y,usable,"Session variables carry verified identity, intent, channel, account type, pending quote and handoff. The simulated clock is fixed at 10 November 2026, 09:00 in India. Full account numbers are absent from the dataset.",10,14)-14
-note(y,f"Local V2 passed {v2['passed']} of {v2['total']} transcript cases. Hosted deployment and console evidence remain pending because Google rejected project access with billing disabled.")
+y=note(y,f"Completed regression testing: local and browser V2 passed {v2['passed']} of {v2['total']} transcripts. Pages 8 and 9 show screenshots of the browser implementation and its measured outcomes.")
+note(y,"Outstanding for submission: the Studio Versions pane, both Studio Evaluate result screenshots, and five human-spoken console calls. The team number and individual contributions also await confirmation.")
 footing(1)
 
 # 2. Traceability.
@@ -178,7 +182,7 @@ note(y,"Run these five calls with a human speaker in Studio audio mode. Record t
 footing(6)
 
 # 7. Evidence lineage.
-y=head(7,"Release state and limitations","The local desk, Studio source packages, workbook and evidence files can be reviewed offline. A course project with active billing is still required to produce the console records specified in the assignment.")
+y=head(7,"Release state and limitations","The completed browser desk, local implementation, Studio packages and workbook are available for review. A billing-enabled course project is required to produce the console records specified in the assignment.")
 y=sub(y,"What can be reproduced")
 y=table(y,[160,usable-160],["Artifact","Evidence and scope"],[
  ("Local builds","The local-v1 Git tag preserves the baseline. evidence/local-v1.json and local-v2.json carry identical test-specification hashes and each case outcome."),
@@ -194,5 +198,68 @@ link(left,y-7,"Google Cloud   /   Studio import format","https://docs.cloud.goog
 link(left,y-23,"Google Cloud   /   Evaluations","https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/evaluation")
 link(left,y-39,"GOV.UK   /   Bank holiday calendar","https://www.gov.uk/bank-holidays")
 footing(7)
+
+def screenshot_page(number, title, intro, file, caption, detail):
+    y=head(number,title,intro)
+    img=ImageReader(str(ROOT/"evidence"/"browser"/file))
+    iw,ih=img.getSize()
+    scale=min(usable/iw,452/ih)
+    w,h=iw*scale,ih*scale
+    x=(W-w)/2
+    c.drawImage(img,x,y-h,w,h)
+    c.setStrokeColor(rgb(line));c.rect(x,y-h,w,h,fill=0,stroke=1)
+    y=y-h-15
+    y=para(left,y,usable,caption,10,14,bold=True)-10
+    y=para(left,y,usable,detail,10,14)-12
+    link(left,y,"Open the original screenshot","https://github.com/Sahil-2006/Bank-Account-Services-Voice-Helpline/blob/main/evidence/browser/"+file)
+    footing(number)
+
+screenshot_page(8,"Verified balance handoff",
+    "A browser call ran the V2 Python implementation from the project's Studio package. The caller used fictional customer HT4102 and confirmed the four-digit ending before asking for a balance.",
+    "balance-handoff.jpg","Figure 1. The desk returned 18,420 rupees and recorded an Instant Pay handoff tagged balance.",
+    "The screenshot captures the completed conversation and routing result. The call used typed inputs. A separate privacy probe in the repository records the desk withholding a PIN given as digit words.")
+screenshot_page(9,"Observed regression pass rates",
+    "Both packaged builds ran against all 53 fixed transcripts inside a fresh browser interpreter. The screenshot was captured after the run completed. The figures match the repository's independent local replay.",
+    "regression-results.jpg","Figure 2. V1 passed 51 of 53 cases (96.2%). V2 passed 53 of 53 (100.0%).",
+    "V1 missed the crisis wording in S10 and routed the harm request in S16 to a representative. V2 passed both cases and retained the other 51 passes. These percentages measure deterministic transcript replay. Google-hosted Evaluate rates have yet to be measured.")
+
+def studio_illustration(slug,title,columns,records):
+    width,height=usable,133
+    graphic=Drawing(width,height)
+    def box(x,y,w,h,color):
+        graphic.add(Rect(x,y,w,h,fillColor=rgb(color),strokeColor=None))
+    def label(x,y,value,size=10,font="Helvetica",color=ink):
+        graphic.add(String(x,y,value,fontName=font,fontSize=size,fillColor=rgb(color)))
+    box(0,0,width,height,"#F0F5F3")
+    box(0,height-28,width,28,"#174A49")
+    label(12,height-18,"STUDIO EVIDENCE GUIDE",8,"Helvetica-Bold",white)
+    label(width-169,height-18,"ILLUSTRATION  /  NO HOSTED RUN",8,"Helvetica-Bold",white)
+    label(12,height-49,title,14,"Helvetica-Bold")
+    widths=[0,169,342]
+    for i,t in enumerate(columns):label(12+widths[i],height-67,t,8.3,"Helvetica-Bold",teal)
+    for j,record in enumerate(records):
+        for i,t in enumerate(record):label(12+widths[i],height-86-j*17,t,9.4)
+    box(0,0,width,17,"#E0EAE5")
+    label(12,5,"A real console capture is still required for this view.",8,"Helvetica",grey)
+    folder=ROOT/"evidence"/"studio-illustrations"
+    folder.mkdir(parents=True,exist_ok=True)
+    renderSVG.drawToFile(graphic,str(folder/(slug+".svg")))
+    return graphic
+
+y=head(10,"Studio evidence capture guide","The following three illustrations identify the fields needed from the team's own console. They use the assignment's naming pattern. No managed version ID or hosted pass rate has been recorded.")
+specs=[
+    ("versions","Versions",["Version label","Application","Native record"],
+     [["Team<NN>-V1","Harbour Trust Voice Desk","Awaiting capture"],["Team<NN>-V2","Harbour Trust Voice Desk","Awaiting capture"]]),
+    ("evaluate-v1","Evaluate results for V1",["Version","Passed / executed","Studio pass rate"],
+     [["Team<NN>-V1","Pending hosted run","Unmeasured"]]),
+    ("evaluate-v2","Evaluate results for V2",["Version","Passed / executed","Studio pass rate"],
+     [["Team<NN>-V2","Pending hosted run","Unmeasured"]])]
+for spec in specs:
+    graphic=studio_illustration(*spec)
+    renderPDF.draw(graphic,c,left,y-graphic.height)
+    y-=graphic.height+16
+y=sub(y,"Evidence required by the assignment")
+note(y,"Section 10 requires full-screen captures with the team's agent names visible. Use the actual Versions pane and both completed Evaluate result screens. Section 7 also requires five spoken calls in the team's own console.")
+footing(10)
 c.save()
 print(OUT)
