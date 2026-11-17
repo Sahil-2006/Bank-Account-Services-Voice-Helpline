@@ -2,3 +2,4 @@
 *.xlsx binary
 *.zip binary
 *.mp4 binary
+demo/browser/vendor/pyodide/** -text -diff

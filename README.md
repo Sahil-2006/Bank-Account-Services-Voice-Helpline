@@ -4,6 +4,8 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
+[Open the browser demo](https://sahil-2006.github.io/Bank-Account-Services-Voice-Helpline/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to run the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
+
 | File | Contents |
 | --- | --- |
 | [Project report](submission/Capstone10_Report.pdf) | Seven pages covering architecture, traceability, every evaluation case, failures, fixes, guardrail probes, voice transcripts and limitations. |

@@ -9,9 +9,9 @@ from helpline.policy import TERMS
 
 CALENDAR = {"england-and-wales":{"events":[{"date":"2026-12-25"},{"date":"2027-01-01"}]}}
 
-def run(c):
+def run(c, desk_type=Desk):
     audit = []
-    desk = Desk(ROWS,calendar=lambda: CALENDAR if c["calendar"]=="ok" else {},callback=audit.append)
+    desk = desk_type(ROWS,calendar=lambda: CALENDAR if c["calendar"]=="ok" else {},callback=audit.append)
     replies = [desk.turn(turn) for turn in c["turns"]]
     last = replies[-1]
     transfer = desk.s["handoff"]
