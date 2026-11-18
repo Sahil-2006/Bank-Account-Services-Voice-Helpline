@@ -45,9 +45,13 @@ These are local browser regression results. They are not CX Agent Studio Evaluat
 2. Explain that the exported Studio package includes an OpenAPI schema and a local fake response for deterministic package replay.
 3. Be precise: the public endpoint and package references have been checked, but a live invocation from CX Agent Studio has not been verified.
 
-### 6. Show the voice work honestly
+### 6. Demonstrate a spoken call
 
-The optional **Use microphone** control can accept a spoken reply when the browser supports speech recognition and the presenter grants microphone access. Typed replies remain available. `demo/HarbourTrust-offline.mp4` is a backup example; it does not replace the five required live Studio voice calls. Existing synthetic Windows-ASR probes achieved 4/5 expected outcomes; overlapping speech remains a known failure in `evidence/local-audio.json`.
+1. Open **Call desk** and click **Start voice call**. Allow microphone access when the browser asks.
+2. The browser reads the prompt aloud, then listens for one caller reply. Answer the verification prompts with the fictional details shown on screen, say **yes**, then ask for a **balance**.
+3. The final reply is spoken and the simulated handoff appears in the conversation. Click **End voice call** to stop early. Browser speech support and recognition quality vary; if voice recognition is unavailable, use **Use mic for one reply** or type the answer.
+
+This is the V2 agent running in the browser with browser-provided speech recognition and speech synthesis. It does not place a telephone call or connect to a staffed queue. `demo/HarbourTrust-offline.mp4` is a backup example; it does not replace the five required live Studio voice calls. Existing synthetic Windows-ASR probes achieved 4/5 expected outcomes; overlapping speech remains a known failure in `evidence/local-audio.json`.
 
 ## What is not yet demonstrated in Studio
 

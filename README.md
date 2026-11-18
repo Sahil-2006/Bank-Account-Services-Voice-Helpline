@@ -4,7 +4,7 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
-[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. Typed replies run in the browser. Speech input depends on the browser's speech service and microphone permission. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
+[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. **Start voice call** runs a turn-by-turn spoken V2 call: the browser reads each prompt, listens for the caller, and passes the transcript through the same Python desk. It requires browser speech support and microphone permission; recognition quality varies by browser. Typed replies remain available. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
 
 | File | Contents |
 | --- | --- |
@@ -28,7 +28,7 @@ python -m helpline
 
 Give each answer when the desk asks. Say **HT4102**, **14 June 1993**, **0042**, **yes**, then **balance**. The desk reports **18,420 rupees** and transfers the simulated call to **Instant Pay**. Calls use 10 November 2026 at 09:00 India time. Local handoff events and daily statement reservations are written in `.local/`. Use `--state-dir PATH` for a separate rehearsal ledger.
 
-For a live local microphone rehearsal on Windows with an installed English (US) Windows speech recognizer, run the following with a headset. The script uses the system speech engine and Python. Saying **zero** requests a person.
+For a live local microphone rehearsal on Windows with an installed English (US) Windows speech recognizer, run the following with a headset. The script uses the system speech engine and Python. Saying **zero** requests a person. This local rehearsal and the browser voice call are speech interfaces to the simulated Python desk; neither places a telephone call.
 
 ```powershell
 powershell.exe -NoProfile -File voice/start.ps1

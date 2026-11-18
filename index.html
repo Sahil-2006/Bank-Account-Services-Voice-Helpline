@@ -16,12 +16,12 @@
 <div class="log" id="log" role="log" aria-label="Conversation with the voice desk"></div>
 <div id="handoff" hidden></div>
 <form id="reply-form"><label for="reply">Your reply</label><div class="compose"><input id="reply" autocomplete="off" placeholder="Type a reply…" maxlength="500" disabled><button class="primary" id="send" disabled>Send</button></div></form>
-<div class="audio"><button class="quiet" id="mic" disabled>Use microphone</button><label><input id="read" type="checkbox"> Read replies aloud</label></div><p class="caption" id="audio-status" role="status"></p>
+<div class="audio"><button class="primary" id="voice-call" disabled>Start voice call</button><button class="quiet" id="mic" disabled>Use mic for one reply</button><label><input id="read" type="checkbox"> Read replies aloud</label></div><p class="caption" id="audio-status" role="status"></p><p class="caption">Voice calls need browser speech support and microphone permission. Recognition quality varies by browser.</p>
 </article>
 <aside class="card reference"><p class="kicker">DEMO CALLER</p><h2>Try a balance check</h2><p>Use these fictional details at the prompts. Keep real account information out of the demo.</p>
 <dl><div><dt>Customer ID</dt><dd>HT4102</dd></div><div><dt>Date of birth</dt><dd>14 June 1993</dd></div><div><dt>Account ending</dt><dd>0042</dd></div></dl>
 <button id="example" class="primary full" disabled>Run example call</button>
-<p class="asidefoot">Say “yes” to confirm the readback, then say “balance”. Say “zero” at any step to request a person.</p>
+<p class="asidefoot">In a voice call, speak after each prompt. Say “yes” to confirm the readback, then say “balance”. Say “zero” at any step to request a person.</p>
 </aside>
 </section>
 <section id="suite-panel" hidden>
