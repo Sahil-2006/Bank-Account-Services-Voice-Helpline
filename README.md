@@ -4,7 +4,7 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
-[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. **Start voice call** runs a turn-by-turn spoken V2 call: browser speech recognition captures caller replies and Fish Audio generates spoken desk replies when configured. Browser speech synthesis is the fallback. It requires browser speech support and microphone permission; recognition quality varies by browser. Fish receives only the assistant's reply text for speech generation, not microphone audio. Use the fictional caller details shown in the demo; do not enter real bank or identity information.
+[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. **Start voice call** runs a turn-by-turn spoken V2 call: browser speech recognition captures caller replies and Fish Audio generates spoken desk replies when configured. Browser speech synthesis is the fallback. It requires browser speech support and microphone permission; recognition quality varies by browser. If the desk speaks but does not hear you, set Microphone to **Allow** in Edge's site permissions (lock icon beside the address), reload, and start again. Fish receives only the assistant's reply text for speech generation, not microphone audio. Use the fictional caller details shown in the demo; do not enter real bank or identity information.
 
 | File | Contents |
 | --- | --- |

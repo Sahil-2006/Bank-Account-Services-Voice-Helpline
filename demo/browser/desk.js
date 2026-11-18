@@ -179,6 +179,23 @@ async function startVoiceCall() {
   controls();
   el("audio-status").textContent = "Voice call started. Speak after each prompt.";
   try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      el("audio-status").textContent = "This browser cannot request microphone access here. Use the one-reply mic or type your answers.";
+      return;
+    }
+    let microphone;
+    try {
+      microphone = await navigator.mediaDevices.getUserMedia({audio:true});
+    } catch (error) {
+      el("audio-status").textContent = error.name === "NotAllowedError" || error.name === "SecurityError"
+        ? "Microphone access is blocked. In Edge, open the lock icon by the address, set Microphone to Allow, reload, and try again."
+        : error.name === "NotFoundError"
+          ? "No microphone was found. Connect a microphone or use typed replies."
+          : "The microphone could not start. Check its connection and site permission, then try again.";
+      return;
+    }
+    microphone.getTracks().forEach(track => track.stop());
+    if (!voiceCallActive) return;
     const first = await request("new");
     show(first, undefined, false);
     let prompt = first.reply;
