@@ -3,6 +3,7 @@ const worker = new Worker(new URL("worker.js", import.meta.url), {type:"module"}
 const requests = new Map();
 let sequence = 0, ready = false, busy = true, closed = false, listening = null;
 let cancelListening = null, cancelSpeech = null, voiceCallActive = false;
+let fishVoiceAvailable = false, fishAudio = null, fishAudioUrl = null, speechController = null;
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speech = window.speechSynthesis;
 const status = text => { el("status").textContent = text; };
@@ -29,11 +30,12 @@ worker.onerror = () => {
   requests.clear();
 };
 function controls() {
+  const voiceOutputAvailable = Boolean(speech || fishVoiceAvailable);
   for (const id of ["reply","send","mic"]) el(id).disabled = !ready || busy || closed;
   el("mic").disabled ||= !Recognition;
   for (const id of ["example","reset","run"]) el(id).disabled = !ready || busy;
-  el("read").disabled = !speech || busy || voiceCallActive;
-  el("voice-call").disabled = !ready || !Recognition || !speech || (busy && !voiceCallActive) || (closed && !voiceCallActive);
+  el("read").disabled = !voiceOutputAvailable || busy || voiceCallActive;
+  el("voice-call").disabled = !ready || !Recognition || !voiceOutputAvailable || (busy && !voiceCallActive) || (closed && !voiceCallActive);
   el("voice-call").textContent = voiceCallActive ? "End voice call" : "Start voice call";
   el("call-view").disabled = busy || voiceCallActive;
   el("suite-view").disabled = busy || voiceCallActive;
@@ -44,6 +46,7 @@ function stopListening() {
 }
 function stopSpeech() {
   speech?.cancel();
+  if (speechController) { const controller = speechController; speechController = null; controller.abort(); }
   if (cancelSpeech) { const finish = cancelSpeech; cancelSpeech = null; finish(); }
 }
 function stopAudio() {
@@ -58,12 +61,11 @@ function message(who, text) {
   item.append(label,body); el("log").append(item); el("log").scrollTop = el("log").scrollHeight;
 }
 function speak(text) {
-  if (!el("read").checked || !speech) return;
+  if (!el("read").checked || (!speech && !fishVoiceAvailable)) return;
   void speakNow(text);
 }
-function speakNow(text) {
+function speakBrowser(text) {
   if (!speech) return Promise.resolve();
-  stopSpeech();
   return new Promise(resolve => {
     let finished = false;
     const done = () => {
@@ -79,6 +81,60 @@ function speakNow(text) {
     cancelSpeech = done;
     speech.speak(utterance);
   });
+}
+function playFishAudio(blob) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    let finished = false;
+    const finish = error => {
+      if (finished) return;
+      finished = true;
+      if (fishAudio === audio) fishAudio = null;
+      if (fishAudioUrl === url) fishAudioUrl = null;
+      audio.onended = audio.onerror = null;
+      audio.pause();
+      audio.removeAttribute("src");
+      URL.revokeObjectURL(url);
+      if (cancelSpeech === cancel) cancelSpeech = null;
+      if (error) reject(error);
+      else resolve();
+    };
+    const cancel = () => finish();
+    fishAudio = audio;
+    fishAudioUrl = url;
+    cancelSpeech = cancel;
+    audio.onended = () => finish();
+    audio.onerror = () => finish(new Error("Fish Audio playback failed"));
+    audio.play().catch(finish);
+  });
+}
+async function speakNow(text) {
+  stopSpeech();
+  if (fishVoiceAvailable) {
+    const controller = new AbortController();
+    speechController = controller;
+    try {
+      const response = await fetch("/api/voice/tts", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text}), signal:controller.signal
+      });
+      if (!response.ok) throw new Error("Fish Audio request failed");
+      const audio = await response.blob();
+      if (controller.signal.aborted) return;
+      if (speechController === controller) speechController = null;
+      await playFishAudio(audio);
+      return;
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      fishVoiceAvailable = false;
+      controls();
+      el("audio-status").textContent = "Fish Audio is unavailable; using the browser voice instead.";
+    } finally {
+      if (speechController === controller) speechController = null;
+    }
+  }
+  await speakBrowser(text);
 }
 function listenOnce() {
   return new Promise(resolve => {
@@ -116,7 +172,7 @@ async function startVoiceCall() {
     controls();
     return;
   }
-  if (busy || !ready || !Recognition || !speech) return;
+  if (busy || !ready || !Recognition || (!speech && !fishVoiceAvailable)) return;
   busy = true;
   voiceCallActive = true;
   closed = false;
@@ -251,8 +307,14 @@ el("run").onclick = () => task(async () => {
   el("results").replaceChildren(cards,node("h3","Failed cases"),list);
 });
 if (!Recognition) el("audio-status").textContent="Speech recognition is unavailable in this browser. Typed replies work.";
-else if (!speech) el("audio-status").textContent="Speech playback is unavailable in this browser. The one-reply microphone and typed replies may still work.";
 try {
-  await reset(false);ready = true;status("Ready · V2 Python build");
+  await reset(false);
+  try {
+    const response = await fetch("/api/voice/tts", {cache:"no-store"});
+    fishVoiceAvailable = response.ok && (await response.json()).available === true;
+  } catch {}
+  ready = true;
+  status(fishVoiceAvailable ? "Ready · V2 · Fish Audio voice" : "Ready · V2 Python build");
+  if (!speech && !fishVoiceAvailable && Recognition) el("audio-status").textContent="Speech playback is unavailable in this browser. Typed replies work.";
 } catch (err) {status(err.message);}
 busy = false;controls();

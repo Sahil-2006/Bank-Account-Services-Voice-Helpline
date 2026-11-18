@@ -4,7 +4,7 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Report and deliverables
 
-[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. **Start voice call** runs a turn-by-turn spoken V2 call: the browser reads each prompt, listens for the caller, and passes the transcript through the same Python desk. It requires browser speech support and microphone permission; recognition quality varies by browser. Typed replies remain available. The demo uses a fixed holiday fixture and remembers statement reservations until the page reloads.
+[Open the live browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). Select **Run example call** to see the verification and balance handoff, or open **Regression suite** to execute the V1 and V2 Python builds yourself. **Start voice call** runs a turn-by-turn spoken V2 call: browser speech recognition captures caller replies and Fish Audio generates spoken desk replies when configured. Browser speech synthesis is the fallback. It requires browser speech support and microphone permission; recognition quality varies by browser. Fish receives only the assistant's reply text for speech generation, not microphone audio. Use the fictional caller details shown in the demo; do not enter real bank or identity information.
 
 | File | Contents |
 | --- | --- |
@@ -33,6 +33,8 @@ For a live local microphone rehearsal on Windows with an installed English (US) 
 ```powershell
 powershell.exe -NoProfile -File voice/start.ps1
 ```
+
+The hosted demo reads `FISH_AUDIO_API_KEY` from the Vercel **Production** environment. The key is never stored in source or exposed to the browser. To set or rotate it, use Vercel Project Settings → Environment Variables. The current build uses Fish Audio's `s2.1-pro-free` TTS model and falls back to browser speech if the provider is unavailable.
 
 ## What the evidence shows
 
