@@ -16,6 +16,8 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Run one complete call
 
+On Windows, double-click [RUN_DEMO.bat](RUN_DEMO.bat) to open the browser desk locally. Use the “Run example call” button for the balance handoff, or choose “Regression suite” and run both versions. Keep the server window open during the demo and press Ctrl+C in it to stop the server. Double-click [RUN_CHECKS.bat](RUN_CHECKS.bat) to run all four local check groups.
+
 Use Python 3.10 or later from the repository root. The text desk and regression runner use the standard library.
 
 ```sh
