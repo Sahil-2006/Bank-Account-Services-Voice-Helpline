@@ -137,19 +137,23 @@ async function speakNow(text) {
   }
   await speakBrowser(text);
 }
-function listenOnce() {
+function listenOnce(language = "en-IN") {
   return new Promise(resolve => {
     const rec = new Recognition();
-    rec.lang = "en-IN";
-    rec.interimResults = false;
-    rec.maxAlternatives = 1;
+    rec.lang = language;
+    rec.interimResults = true;
+    rec.maxAlternatives = 3;
     let finished = false;
+    let partial = "";
+    let timeout;
     const complete = (result, stop = false) => {
       if (finished) return;
       finished = true;
+      clearTimeout(timeout);
       if (listening === rec) listening = null;
       if (cancelListening === cancel) cancelListening = null;
       rec.onstart = rec.onresult = rec.onerror = rec.onend = null;
+      rec.onaudiostart = rec.onspeechstart = rec.onspeechend = null;
       if (stop) { try { rec.stop(); } catch {} }
       if (!voiceCallActive) el("mic").textContent = "Use mic for one reply";
       resolve(result);
@@ -157,13 +161,39 @@ function listenOnce() {
     const cancel = () => { complete({cancelled:true}); try { rec.abort(); } catch {} };
     listening = rec;
     cancelListening = cancel;
-    rec.onstart = () => { el("audio-status").textContent = "Listening for your reply…"; };
-    rec.onresult = event => complete({text:event.results[0][0].transcript || ""}, true);
+    rec.onstart = () => { el("audio-status").textContent = "Microphone active. Speak now…"; };
+    rec.onaudiostart = () => { el("audio-status").textContent = "Listening… say one short reply."; };
+    rec.onspeechstart = () => { el("audio-status").textContent = "Speech detected…"; };
+    rec.onspeechend = () => { el("audio-status").textContent = "Got your speech. Processing…"; };
+    rec.onresult = event => {
+      const finalParts = [], interimParts = [];
+      for (let i=0;i<event.results.length;i++) {
+        const result = event.results[i];
+        const text = result[0]?.transcript?.trim();
+        if (!text) continue;
+        (result.isFinal ? finalParts : interimParts).push(text);
+      }
+      if (finalParts.length) {
+        complete({text:finalParts.join(" ")}, true);
+      } else if (interimParts.length) {
+        partial = interimParts.join(" ");
+        el("audio-status").textContent = "I hear: “" + partial + "”";
+      }
+    };
     rec.onerror = event => complete({error:event.error || "recognition-error"});
-    rec.onend = () => complete({error:"no-speech"});
+    rec.onend = () => complete(partial ? {text:partial} : {error:"no-speech"});
+    timeout = setTimeout(() => complete(partial ? {text:partial} : {error:"no-speech"}, true),15_000);
     try { rec.start(); }
-    catch { complete({error:"unavailable"}); }
+    catch (error) { complete({error:error?.name === "NotAllowedError" ? "not-allowed" : "unavailable"}); }
   });
+}
+async function listenForReply() {
+  let result = await listenOnce("en-IN");
+  if (result.error === "language-not-supported") {
+    el("audio-status").textContent = "English (India) is unavailable here. Trying English (US)…";
+    result = await listenOnce("en-US");
+  }
+  return result;
 }
 function recognitionError(error) {
   if (error === "not-allowed" || error === "service-not-allowed") {
@@ -213,7 +243,7 @@ async function startVoiceCall() {
     while (voiceCallActive && !closed) {
       await speakNow(prompt);
       if (!voiceCallActive || closed) break;
-      const result = await listenOnce();
+      const result = await listenForReply();
       if (result.cancelled || !voiceCallActive) break;
       if (result.error || !result.text.trim()) {
         if (result.error && !["no-speech","aborted"].includes(result.error)) {
@@ -300,7 +330,7 @@ el("mic").onclick = async () => {
   stopSpeech();
   el("mic").textContent = "Stop listening";
   el("audio-status").textContent = "Listening for your reply…";
-  const result = await listenOnce();
+  const result = await listenForReply();
   if (result.cancelled) { el("audio-status").textContent = "Listening stopped."; return; }
   if (result.error || !result.text.trim()) {
     el("audio-status").textContent = result.error === "no-speech"
