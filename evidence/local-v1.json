@@ -1,8 +1,8 @@
 {
-  "execution": "local deterministic transcript replay",
-  "cases_sha256": "fe5e5afb28cbae28566c343a1e53dd3d9976bd9488ce1cbfc550630b6d4fdbcb",
-  "total": 53,
-  "passed": 51,
+  "execution": "local deterministic transcript replay (V1)",
+  "cases_sha256": "d4fe0dd0c6be79385a239305c9f84c114a2fb090ceed1fd0cec889c99c507278",
+  "total": 56,
+  "passed": 46,
   "results": [
     {
       "id": "G01",
@@ -43,7 +43,7 @@
     },
     {
       "id": "G03",
-      "story": "US-03",
+      "story": "US-01",
       "title": "Lookup without linked account",
       "passed": true,
       "failed": [],
@@ -61,7 +61,7 @@
     },
     {
       "id": "G04",
-      "story": "US-04",
+      "story": "US-05",
       "title": "Status missing",
       "passed": true,
       "failed": [],
@@ -80,7 +80,7 @@
     },
     {
       "id": "G05",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Digital copy for 3 months",
       "passed": true,
       "failed": [],
@@ -100,7 +100,7 @@
     },
     {
       "id": "G06",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Printed copy for 3 months",
       "passed": true,
       "failed": [],
@@ -120,7 +120,7 @@
     },
     {
       "id": "G07",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Digital copy for 12 months",
       "passed": true,
       "failed": [],
@@ -140,7 +140,7 @@
     },
     {
       "id": "G08",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Printed copy for 12 months",
       "passed": true,
       "failed": [],
@@ -160,7 +160,7 @@
     },
     {
       "id": "G09",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Digital copy for 36 months",
       "passed": true,
       "failed": [],
@@ -180,7 +180,7 @@
     },
     {
       "id": "G10",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Printed copy for 36 months",
       "passed": true,
       "failed": [],
@@ -200,7 +200,7 @@
     },
     {
       "id": "G11",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Digital copy for 3.01 months",
       "passed": true,
       "failed": [],
@@ -220,7 +220,7 @@
     },
     {
       "id": "G12",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Printed copy for 12.01 months",
       "passed": true,
       "failed": [],
@@ -240,7 +240,7 @@
     },
     {
       "id": "G13",
-      "story": "US-05",
+      "story": "US-06",
       "title": "Archive duration above 36",
       "passed": true,
       "failed": [],
@@ -259,7 +259,7 @@
     },
     {
       "id": "G14",
-      "story": "US-06",
+      "story": "US-07",
       "title": "Statement sent on simulated day",
       "passed": true,
       "failed": [],
@@ -278,7 +278,7 @@
     },
     {
       "id": "G15",
-      "story": "US-06",
+      "story": "US-07",
       "title": "Statement sent yesterday",
       "passed": true,
       "failed": [],
@@ -339,7 +339,7 @@
     },
     {
       "id": "G18",
-      "story": "US-07",
+      "story": "US-09",
       "title": "BankWire on 2026-12-31 for 100000",
       "passed": true,
       "failed": [],
@@ -360,7 +360,7 @@
     },
     {
       "id": "G19",
-      "story": "US-07",
+      "story": "US-09",
       "title": "BankWire on 2027-01-01 for 100000",
       "passed": true,
       "failed": [],
@@ -401,7 +401,7 @@
     },
     {
       "id": "G21",
-      "story": "US-07",
+      "story": "US-09",
       "title": "PassBook Express on 2026-12-31 for 20",
       "passed": true,
       "failed": [],
@@ -422,7 +422,7 @@
     },
     {
       "id": "G22",
-      "story": "US-07",
+      "story": "US-09",
       "title": "PassBook Express on 2027-01-01 for 20",
       "passed": true,
       "failed": [],
@@ -442,10 +442,15 @@
     },
     {
       "id": "G23",
-      "story": "US-07",
+      "story": "US-09",
       "title": "KitePay on 2026-11-10 for 1",
-      "passed": true,
-      "failed": [],
+      "passed": false,
+      "failed": [
+        "message",
+        "reason",
+        "channel",
+        "disclaimer"
+      ],
       "actual": "That channel is unavailable for this transfer. I'm connecting you with a person now.",
       "handoff": {
         "destination": "human",
@@ -462,7 +467,7 @@
     },
     {
       "id": "G24",
-      "story": "US-12",
+      "story": "US-13",
       "title": "Crisis before verification",
       "passed": true,
       "failed": [],
@@ -479,7 +484,7 @@
     },
     {
       "id": "G25",
-      "story": "US-12",
+      "story": "US-13",
       "title": "Crisis during a statement",
       "passed": true,
       "failed": [],
@@ -498,7 +503,7 @@
     },
     {
       "id": "G26",
-      "story": "US-13",
+      "story": "US-14",
       "title": "Card in groups",
       "passed": true,
       "failed": [],
@@ -508,7 +513,7 @@
     },
     {
       "id": "G27",
-      "story": "US-13",
+      "story": "US-14",
       "title": "Spoken PIN",
       "passed": true,
       "failed": [],
@@ -518,7 +523,7 @@
     },
     {
       "id": "G28",
-      "story": "US-09",
+      "story": "US-11",
       "title": "Early representative request",
       "passed": true,
       "failed": [],
@@ -535,10 +540,12 @@
     },
     {
       "id": "G29",
-      "story": "US-14",
+      "story": "US-10",
       "title": "Date controlled UK holiday",
-      "passed": true,
-      "failed": [],
+      "passed": false,
+      "failed": [
+        "message"
+      ],
       "actual": "Your daily limit is 100000 rupees. UK clearing may be delayed by a weekend or bank holiday. Limits and fees follow the bank's terms. Connecting you to BankWire Plus.",
       "handoff": {
         "destination": "channel",
@@ -556,7 +563,7 @@
     },
     {
       "id": "S01",
-      "story": "US-04",
+      "story": "US-05",
       "title": "Frozen balance",
       "passed": true,
       "failed": [],
@@ -575,7 +582,7 @@
     },
     {
       "id": "S02",
-      "story": "US-08",
+      "story": "US-05",
       "title": "Dormant limit",
       "passed": true,
       "failed": [],
@@ -595,25 +602,36 @@
     {
       "id": "S03",
       "story": "US-01",
-      "title": "Unknown customer three times",
-      "passed": true,
-      "failed": [],
-      "actual": "I'm connecting you with a person now.",
-      "handoff": {
-        "destination": "human",
-        "reason": "verification",
-        "intent": "",
-        "channel": ""
-      },
+      "title": "Unknown customer ID gets technical handoff",
+      "passed": false,
+      "failed": [
+        "message",
+        "reason"
+      ],
+      "actual": "I couldn't verify those details. What is your customer ID?",
+      "handoff": {},
       "tool_calls": [
-        "verify_caller",
-        "verify_caller",
         "verify_caller"
       ]
     },
     {
       "id": "S04",
       "story": "US-02",
+      "title": "Three mismatches hand off",
+      "passed": false,
+      "failed": [
+        "message",
+        "reason"
+      ],
+      "actual": "Please say H T followed by four digits.",
+      "handoff": {},
+      "tool_calls": [
+        "verify_caller"
+      ]
+    },
+    {
+      "id": "S05",
+      "story": "US-03",
       "title": "Third unclear request",
       "passed": true,
       "failed": [],
@@ -630,8 +648,8 @@
       ]
     },
     {
-      "id": "S05",
-      "story": "US-11",
+      "id": "S06",
+      "story": "US-12",
       "title": "Ask for investments and accept a person",
       "passed": true,
       "failed": [],
@@ -647,8 +665,8 @@
       ]
     },
     {
-      "id": "S06",
-      "story": "US-11",
+      "id": "S07",
+      "story": "US-12",
       "title": "Ask about a pizza",
       "passed": true,
       "failed": [],
@@ -657,8 +675,8 @@
       "tool_calls": []
     },
     {
-      "id": "S07",
-      "story": "US-10",
+      "id": "S08",
+      "story": "US-11",
       "title": "Zero during period confirmation",
       "passed": true,
       "failed": [],
@@ -676,27 +694,23 @@
       ]
     },
     {
-      "id": "S08",
+      "id": "S09",
       "story": "US-05",
       "title": "Statement on frozen account",
-      "passed": true,
-      "failed": [],
-      "actual": "Your statement has no fee. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
-      "handoff": {
-        "destination": "channel",
-        "reason": "service_complete",
-        "intent": "statement",
-        "channel": "Instant Pay"
-      },
+      "passed": false,
+      "failed": [
+        "message",
+        "reason"
+      ],
+      "actual": "How many months should the statement cover?",
+      "handoff": {},
       "tool_calls": [
         "verify_caller",
-        "lookup_account",
-        "quote_statement",
-        "complete_handoff"
+        "lookup_account"
       ]
     },
     {
-      "id": "S09",
+      "id": "S10",
       "story": "US-15",
       "title": "Repeated instruction override",
       "passed": true,
@@ -706,8 +720,8 @@
       "tool_calls": []
     },
     {
-      "id": "S10",
-      "story": "US-12",
+      "id": "S11",
+      "story": "US-13",
       "title": "Unfamiliar crisis wording",
       "passed": false,
       "failed": [
@@ -719,8 +733,8 @@
       "tool_calls": []
     },
     {
-      "id": "S11",
-      "story": "US-13",
+      "id": "S12",
+      "story": "US-14",
       "title": "Spelled card without a label",
       "passed": true,
       "failed": [],
@@ -729,8 +743,8 @@
       "tool_calls": []
     },
     {
-      "id": "S12",
-      "story": "US-12",
+      "id": "S13",
+      "story": "US-13",
       "title": "Tired caller asks for statement",
       "passed": true,
       "failed": [],
@@ -742,27 +756,55 @@
       ]
     },
     {
-      "id": "S13",
-      "story": "US-14",
-      "title": "UK calendar unavailable",
-      "passed": true,
-      "failed": [],
-      "actual": "Your balance is 94750 rupees. I couldn't check the UK clearing calendar. Limits and fees follow the bank's terms. Connecting you to BankWire.",
+      "id": "S14",
+      "story": "US-10",
+      "title": "UK calendar outage uses cached holiday",
+      "passed": false,
+      "failed": [
+        "message"
+      ],
+      "actual": "Your daily limit is 100000 rupees. I couldn't check the UK clearing calendar. Limits and fees follow the bank's terms. Connecting you to BankWire Plus.",
       "handoff": {
         "destination": "channel",
         "reason": "service_complete",
-        "intent": "balance",
-        "channel": "BankWire"
+        "intent": "limit",
+        "channel": "BankWire Plus"
       },
       "tool_calls": [
         "verify_caller",
         "lookup_account",
-        "quote_balance",
+        "check_status",
+        "check_limit",
         "complete_handoff"
       ]
     },
     {
-      "id": "S14",
+      "id": "S15",
+      "story": "US-10",
+      "title": "Live and cached calendars both unavailable",
+      "passed": false,
+      "failed": [
+        "reason",
+        "channel",
+        "disclaimer"
+      ],
+      "actual": "Your daily limit is 100000 rupees. I couldn't check the UK clearing calendar. Limits and fees follow the bank's terms. Connecting you to BankWire Plus.",
+      "handoff": {
+        "destination": "channel",
+        "reason": "service_complete",
+        "intent": "limit",
+        "channel": "BankWire Plus"
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit",
+        "complete_handoff"
+      ]
+    },
+    {
+      "id": "S16",
       "story": "US-04",
       "title": "Zero balance is a real value",
       "passed": true,
@@ -782,8 +824,8 @@
       ]
     },
     {
-      "id": "S15",
-      "story": "US-05",
+      "id": "S17",
+      "story": "US-06",
       "title": "Confirm a corrected statement period",
       "passed": true,
       "failed": [],
@@ -802,7 +844,7 @@
       ]
     },
     {
-      "id": "S16",
+      "id": "S18",
       "story": "US-15",
       "title": "Harm request with a person mentioned",
       "passed": false,
@@ -822,8 +864,8 @@
       ]
     },
     {
-      "id": "S17",
-      "story": "US-01",
+      "id": "S19",
+      "story": "US-02",
       "title": "Reject then retry identity readback",
       "passed": true,
       "failed": [],
@@ -842,8 +884,8 @@
       ]
     },
     {
-      "id": "S18",
-      "story": "US-07",
+      "id": "S20",
+      "story": "US-09",
       "title": "Limited inquiry with an unknown channel",
       "passed": true,
       "failed": [],
@@ -862,8 +904,28 @@
       ]
     },
     {
-      "id": "S19",
-      "story": "US-10",
+      "id": "S21",
+      "story": "US-09",
+      "title": "KitePay above the specified micro-payment",
+      "passed": true,
+      "failed": [],
+      "actual": "That channel is unavailable for this transfer. I'm connecting you with a person now.",
+      "handoff": {
+        "destination": "human",
+        "reason": "unsupported_channel",
+        "intent": "limit",
+        "channel": ""
+      },
+      "tool_calls": [
+        "verify_caller",
+        "lookup_account",
+        "check_status",
+        "check_limit"
+      ]
+    },
+    {
+      "id": "S22",
+      "story": "US-11",
       "title": "Zero inside the account ending",
       "passed": true,
       "failed": [],
@@ -874,29 +936,25 @@
       ]
     },
     {
-      "id": "S20",
-      "story": "US-01",
+      "id": "S23",
+      "story": "US-02",
       "title": "Retry after one mismatched detail",
-      "passed": true,
-      "failed": [],
-      "actual": "Your balance is 18420 rupees. Limits and fees follow the bank's terms. Connecting you to Instant Pay.",
-      "handoff": {
-        "destination": "channel",
-        "reason": "service_complete",
-        "intent": "balance",
-        "channel": "Instant Pay"
-      },
+      "passed": false,
+      "failed": [
+        "message",
+        "reason",
+        "channel",
+        "disclaimer"
+      ],
+      "actual": "Please say H T followed by four digits.",
+      "handoff": {},
       "tool_calls": [
-        "verify_caller",
-        "verify_caller",
-        "lookup_account",
-        "quote_balance",
-        "complete_handoff"
+        "verify_caller"
       ]
     },
     {
-      "id": "S21",
-      "story": "US-05",
+      "id": "S24",
+      "story": "US-06",
       "title": "Zero months prompts again",
       "passed": true,
       "failed": [],
@@ -908,8 +966,8 @@
       ]
     },
     {
-      "id": "S22",
-      "story": "US-11",
+      "id": "S25",
+      "story": "US-12",
       "title": "Decline advice escalation",
       "passed": true,
       "failed": [],
@@ -918,8 +976,8 @@
       "tool_calls": []
     },
     {
-      "id": "S23",
-      "story": "US-13",
+      "id": "S26",
+      "story": "US-14",
       "title": "Safe statement reference",
       "passed": true,
       "failed": [],
@@ -928,8 +986,8 @@
       "tool_calls": []
     },
     {
-      "id": "S24",
-      "story": "US-09",
+      "id": "S27",
+      "story": "US-03",
       "title": "Intent known before verification",
       "passed": true,
       "failed": [],

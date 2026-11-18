@@ -16,6 +16,7 @@ function request(action, text = "") {
   });
 }
 worker.onmessage = ({data}) => {
+  if (data.type === "progress") { status(data.message); return; }
   const pending = requests.get(data.id);
   if (!pending) return;
   requests.delete(data.id);
@@ -164,6 +165,15 @@ function listenOnce() {
     catch { complete({error:"unavailable"}); }
   });
 }
+function recognitionError(error) {
+  if (error === "not-allowed" || error === "service-not-allowed") {
+    return "Microphone access is blocked. Allow it in the browser's site permissions, reload, and try again.";
+  }
+  if (error === "audio-capture") return "No microphone was found. Connect one or use typed replies.";
+  if (error === "network") return "Browser speech recognition could not reach its speech service. Check the connection or type your reply.";
+  if (error === "language-not-supported") return "This browser does not support English (India) recognition. Use typed replies or another supported browser.";
+  return "Speech recognition is unavailable. You can type replies or use the one-reply mic.";
+}
 async function startVoiceCall() {
   if (voiceCallActive) {
     voiceCallActive = false;
@@ -207,9 +217,7 @@ async function startVoiceCall() {
       if (result.cancelled || !voiceCallActive) break;
       if (result.error || !result.text.trim()) {
         if (result.error && !["no-speech","aborted"].includes(result.error)) {
-          el("audio-status").textContent = result.error === "not-allowed"
-            ? "Microphone access was declined. Allow it in the browser, then start another call."
-            : "Speech recognition is unavailable. You can type replies or use the one-reply mic.";
+          el("audio-status").textContent = recognitionError(result.error);
           break;
         }
         misses += 1;
@@ -295,9 +303,9 @@ el("mic").onclick = async () => {
   const result = await listenOnce();
   if (result.cancelled) { el("audio-status").textContent = "Listening stopped."; return; }
   if (result.error || !result.text.trim()) {
-    el("audio-status").textContent = result.error === "not-allowed"
-      ? "Microphone access was declined. You can type a reply."
-      : "No speech recognized. Try again or type a reply.";
+    el("audio-status").textContent = result.error === "no-speech"
+      ? "No speech recognized. Try again or type a reply."
+      : recognitionError(result.error);
     return;
   }
   el("audio-status").textContent = "";
@@ -324,6 +332,9 @@ el("run").onclick = () => task(async () => {
   el("results").replaceChildren(cards,node("h3","Failed cases"),list);
 });
 if (!Recognition) el("audio-status").textContent="Speech recognition is unavailable in this browser. Typed replies work.";
+const startupHint = setTimeout(() => {
+  if (!ready) status("The first load can take a minute. If this message stays here, refresh the page or try the local demo.");
+}, 20_000);
 try {
   await reset(false);
   try {
@@ -334,4 +345,5 @@ try {
   status(fishVoiceAvailable ? "Ready · V2 · Fish Audio voice" : "Ready · V2 Python build");
   if (!speech && !fishVoiceAvailable && Recognition) el("audio-status").textContent="Speech playback is unavailable in this browser. Typed replies work.";
 } catch (err) {status(err.message);}
+finally {clearTimeout(startupHint);}
 busy = false;controls();

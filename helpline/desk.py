@@ -115,7 +115,7 @@ class Desk:
             if intent == "balance":
                 self.run_tool(quote_balance,self.rows)
                 return self.deliver()
-            if intent == "limit":
+            if intent in ("limit", "statement"):
                 from .tools import check_status
                 self.trace.append("check_status")
                 if not check_status(s,row):
@@ -168,22 +168,24 @@ class Desk:
         elif stage == "dob":
             day = parse_day(text)
             if day:
-                s.update(dob=day,stage="ending")
+                next_stage = "confirm_id" if s.get("retry_stage") == "dob" and s.get("ending") else "ending"
+                s.update(dob=day,stage=next_stage,retry_stage="")
             elif self.invalid_identity_entry():
                 return HUMAN
         elif stage == "ending":
             tail = compact_digits(text)
             if re.fullmatch(r"\d{4}",tail):
-                s.update(ending=tail,stage="confirm_id")
+                s.update(ending=tail,stage="confirm_id",retry_stage="")
             elif self.invalid_identity_entry():
                 return HUMAN
         else:
             if text in NO:
-                s.update(candidate="",ending="",dob="",stage="id")
+                s.update(candidate="",ending="",dob="",retry_stage="",attempts=0,stage="id")
             elif text in YES:
-                result = self.run_tool(verify_caller,self.rows,s["candidate"],s["dob"],s["ending"])["result"]
-                s.update(candidate="",dob="")
+                verification = self.run_tool(verify_caller,self.rows,s["candidate"],s["dob"],s["ending"])
+                result = verification["result"]
                 if result == "verified":
+                    s.update(candidate="",dob="")
                     if s["intent_tag"]:
                         return self.process(s["intent_tag"])
                     return MENU
@@ -191,8 +193,11 @@ class Desk:
                     return HUMAN
                 if result == "technical":
                     return human_message(s) + " " + HUMAN
-                s.update(stage="id",ending="")
-                return "I couldn't verify those details. " + ASK["id"]
+                failed_fields = verification.get("failed_fields", [])
+                retry = failed_fields[0] if failed_fields else "id"
+                s[retry] = ""
+                s.update(stage=retry,retry_stage=retry)
+                return "I couldn't verify those details. " + ASK[retry]
         return current_prompt(s)
 
     def invalid_identity_entry(self):
@@ -224,6 +229,10 @@ class Desk:
                 feed = self.calendar()
             except Exception:
                 feed = {}
-            answer += " " + uk_advisory(s["pending"]["date"],feed)
+            advisory = uk_advisory(s["pending"]["date"],feed)
+            if advisory == "I couldn't check the UK clearing calendar.":
+                self.run_tool(finish,"human","calendar")
+                return (human_message(s) + " " + HUMAN).strip()
+            answer += " " + advisory
         self.run_tool(complete_handoff)
         return answer + " " + TERMS + " Connecting you to " + channel + "."

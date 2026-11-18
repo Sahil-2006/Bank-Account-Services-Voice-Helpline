@@ -6,7 +6,7 @@ from pathlib import Path
 from evaluation.catalog import ROWS,login
 from helpline.__main__ import local_desk
 from helpline.desk import Desk,parse_day
-from helpline.policy import PRIVATE,SAFE,charge,classify,safe_output,uk_advisory
+from helpline.policy import PRIVATE,SAFE,charge,classify,safe_output,uk_advisory,uk_clearing_date
 from helpline.tools import fresh,lookup_account,quote_balance,quote_statement,check_limit,complete_handoff
 
 class Invariants(unittest.TestCase):
@@ -33,9 +33,30 @@ class Invariants(unittest.TestCase):
         self.assertEqual(len(events),1)
     def test_two_retries_can_succeed(self):
         d=Desk(ROWS)
-        wrong=["HT4102","1993-06-15","0042","yes"]
-        for turn in wrong*2+login(0): d.turn(turn)
-        self.assertTrue(d.s["verified"]);self.assertEqual(d.s["attempts"],3)
+        turns=["HT4102","1993-06-15","0042","yes","1993-06-16","yes","1993-06-14","yes"]
+        for turn in turns: d.turn(turn)
+        self.assertTrue(d.s["verified"]);self.assertEqual(d.s["attempts"],0)
+    def test_verification_retry_only_reasks_the_failed_field(self):
+        d=Desk(ROWS)
+        for turn in ["HT4102","1993-06-15","0042","yes"]: reply=d.turn(turn)
+        self.assertIn("date of birth",reply.lower())
+        self.assertEqual(d.s["stage"],"dob")
+        self.assertEqual((d.s["candidate"],d.s["ending"]),("HT4102","0042"))
+        d.turn("1993-06-14")
+        self.assertEqual(d.s["stage"],"confirm_id")
+        d.turn("yes")
+        self.assertTrue(d.s["verified"])
+    def test_unknown_customer_id_is_a_technical_handoff(self):
+        d=Desk(ROWS)
+        for turn in ("HT0000","1993-06-14","0042","yes"): reply=d.turn(turn)
+        self.assertIn("couldn't retrieve",reply.lower())
+        self.assertEqual(d.s["handoff"]["reason"],"lookup")
+    def test_frozen_statement_is_not_automated(self):
+        d=Desk(ROWS)
+        for turn in login(3)+["statement"]: reply=d.turn(turn)
+        self.assertIn("colleague",reply.lower())
+        self.assertEqual(d.s["handoff"]["reason"],"status")
+        self.assertNotIn("fee",reply.lower())
     def test_lookup_exception_reaches_human(self):
         class Unavailable:
             def __iter__(self):
@@ -64,6 +85,10 @@ class Invariants(unittest.TestCase):
             self.assertEqual(parse_day(t),"1993-06-14")
         self.assertFalse(parse_day("31 February 2027"))
         self.assertIn("couldn't check",uk_advisory("2034-01-01",{}))
+        self.assertIn("cached calendar",uk_advisory("2027-01-01",{}))
+        self.assertIn("4 January 2027",uk_advisory("2027-01-01",{}))
+        self.assertIn("couldn't check",uk_advisory("2027-01-01",{},fallback={}))
+        self.assertEqual(uk_clearing_date("2027-01-01",{}),{"available":True,"date":"2027-01-04","adjusted":True,"source":"cache"})
     def test_sensitive_interruption_does_not_mutate_identity(self):
         d=Desk(ROWS);d.turn("HT4102")
         self.assertEqual(d.turn("my PIN is one two three four"),PRIVATE)

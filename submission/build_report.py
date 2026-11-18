@@ -32,7 +32,7 @@ def para(x,y,w,t,size=10.3,leading=14,color=ink,bold=False):
     p=Paragraph(escape(str(t)),st);_,h=p.wrap(w,900);p.drawOn(c,x,y-h);return y-h
 def head(n,title,desc):
     txt(left,H-39,"HARBOUR TRUST   /   ENGINEERING REPORT",8,"Helvetica-Bold",teal)
-    c.setFillColor(rgb(grey));c.setFont("Helvetica",8);c.drawRightString(right,H-39,"CAPSTONE 10     •     17 NOVEMBER 2026")
+    c.setFillColor(rgb(grey));c.setFont("Helvetica",8);c.drawRightString(right,H-39,"CAPSTONE 10     •     19 NOVEMBER 2026")
     txt(left,H-86,title,25,"Helvetica-Bold")
     return para(left,H-104,usable,desc,11,15,grey)-20
 def footing(i):
@@ -86,7 +86,7 @@ diagram_node(left,y,usable,58,"Caller and voice input","Voice or chat enters the
 arrow(W/2,y-58,y-77);y-=79
 diagram_node(left,y,usable,64,"Root agent    /    Harbour Trust Voice Desk","Collect customer ID, date of birth and account ending. Read the ID and ending back and wait for confirmation. Verification matches one active fixture. A blocked match or third mismatch routes to a person.")
 arrow(W/2,y-64,y-83);y-=85
-diagram_node(left,y,usable,75,"Child agent    /    Account Service","Look up the verified account and capture balance, statement or limit. Python tools check status, round statement periods, quote fees, compare limits and resolve the transfer channel by date. BankWire can consult the GOV.UK calendar.")
+diagram_node(left,y,usable,75,"Child agent    /    Account Service","Look up the verified account and capture balance, statement or limit. Python tools check status, quote fees, compare limits and resolve channels by date. BankWire moves UK weekends and holidays to the next business day using live GOV.UK data or cache; if both fail, it routes to a person.")
 gap=12;half=(usable-gap)/2
 x1=left+half/2;x2=left+half+gap+half/2
 c.setStrokeColor(rgb(teal));c.line(W/2,y-75,W/2,y-84);c.line(x1,y-84,x2,y-84)
@@ -97,19 +97,19 @@ y-=84
 y=sub(y,"Controls shared by both agents")
 y=para(left,y,usable,"A check on user input screens private numbers and crisis language. Output policy checks account endings, monetary claims and advice. Model safety and prompt security add two provider controls. A callback records destination, reason, intent and channel.",10,14)-13
 y=para(left,y,usable,"Session variables carry verified identity, intent, channel, account type, pending quote and handoff. The simulated clock is fixed at 10 November 2026, 09:00 in India. Full account numbers are absent from the dataset.",10,14)-14
-y=note(y,f"Completed regression testing: local and browser V2 passed {v2['passed']} of {v2['total']} transcripts. Pages 8 and 9 show screenshots of the browser implementation and its measured outcomes.")
+y=note(y,f"Completed regression testing: local V2 passed {v2['passed']} of {v2['total']} transcripts. Page 8 shows the actual Studio Build view and the browser balance call; page 9 shows current browser replay results.")
 note(y,"Outstanding for submission: the Studio Versions pane, both Studio Evaluate result screenshots, and five human-spoken console calls. The team number and individual contributions also await confirmation.")
 footing(1)
 
 # 2. Traceability.
 y=head(2,"Requirements and traceability","Each story has acceptance criteria, business rules, error scenarios and linked data in the accompanying workbook. G identifies a golden specification and S identifies a scenario specification.")
 matrix=[]
-mapping=["Identity matching","Intent selection","Account lookup","Status and balance","Statement quote","Prior dispatch and daily reservation","Channel date rules","Plan limit and status","Handoff and callback","Immediate human override","Scope and advice offer","Crisis input rule and handoff","Private input and grounded output","OpenAPI calendar and fallback","Harm safety and prompt security"]
+mapping=["Identity matching and lookup","Retry only the failed detail","Intent selection and preservation","Balance response","Status and fail-closed checks","Statement fees and limits","Daily duplicate prevention","Plan transfer caps","Channel/date boundaries and micro-payments","OpenAPI calendar and date adjustment","Human handoff","Scope and advice offer","Crisis input rule and handoff","Private input and safe output","Prompt security and grounded replies"]
 for i,story in enumerate(STORIES,1):
     key=f"US-{i:02}";matrix.append((key,story[0],mapping[i-1],compressed([x["id"] for x in CASES if x["story"]==key])))
 y=table(y,[47,135,150,usable-332],["Story","Caller need","Tool or guardrail","Linked tests"],matrix,8.8,11.2,5)-18
 y=sub(y,"Fictional records")
-y=para(left,y,usable,"Nine customer records cover Basic and Premium plans, a blocked customer, four account-status conditions, a missing account, a zero balance and two prior-statement dates. The desk uses the authenticated session identity for each lookup.",10,14)-10
+y=para(left,y,usable,"Nine fictional records cover Basic and Premium plans, blocked, frozen, dormant and missing statuses, a missing linked account, a zero balance and two prior-statement dates. The desk uses the authenticated session identity for each lookup.",10,14)-10
 note(y,"For a reproducible balance call, enter HT4102, give 14 June 1993 and ending 0042, confirm, then choose balance. The expected result is 18,420 rupees and an Instant Pay handoff.")
 footing(2)
 
@@ -135,18 +135,18 @@ y=table(y,[145,usable-145],["Boundary","Expected decision"],[
  ("3, 12 and 36 months","Digital fees are 0, 100 and 300 rupees. Printed fees are 100, 250 and 500."),
  ("Fractional months","3.01 months enters the second tier. 12.01 enters the third. 36.01 routes to a person."),
  ("25,000 and 1,00,000 rupees","Basic and Premium accept their exact daily caps. One rupee above either cap routes to a person."),
- ("31 Dec 2026 / 1 Jan 2027","PassBook Express stops at the year boundary. BankWire becomes BankWire Plus.")],9,12,5)
+ ("31 Dec 2026 / 1 Jan 2027","PassBook Express stops at the year boundary. BankWire becomes BankWire Plus."),
+ ("Holiday and micro-payment","KitePay accepts 1 rupee only. A UK weekend or holiday moves to the next business day.")],9,12,5)
 footing(3)
-y=head(4,"Scenario tests and regression results","The 24 scenario specifications contain a caller goal and scoring rubrics for Studio. The local runner replays fixed transcripts. It does not simulate a generative caller.")
+y=head(4,"Scenario tests and regression results","The 27 scenario specifications contain a caller goal and scoring rubrics for Studio. The local runner replays fixed transcripts. It does not simulate a generative caller.")
 y=suite_grid(y,"scenario")
 y=sub(y,"Unchanged suite across two builds")
 y=table(y,[141,81,80,usable-302],["Execution","V1","V2","Evidence"],[
- ("Golden replay","29 / 29","29 / 29","Independent expected messages and outcomes"),
- ("Scenario replay","22 / 24","24 / 24","Two routing defects in V1"),
- ("All local transcripts","51 / 53","53 / 53","96.2% to 100.0%"),
+ ("Golden replay","27 / 29","29 / 29","V1 misses KitePay and calendar boundary"),
+ ("Scenario replay","19 / 27","27 / 27","Ten baseline misses overall"),
+ ("All local transcripts","46 / 56","56 / 56","82.1% to 100.0%"),
  ("Hosted Evaluate","Pending","Pending","Google Cloud billing required")],9,11,4)-14
-y=para(left,y,usable,"S10, agent bug. The phrase “thinking of taking my own life” missed the original verb form. The desk asked for an ID. V2 recognizes the inflection, speaks the approved response and records a human handoff.",9.8,13.2)-8
-y=para(left,y,usable,"S16, agent bug. The word “someone” in a request to harm someone activated the human shortcut. V2 checks this harmful request before the person shortcut. The safe response now appears without an unintended transfer.",9.8,13.2)
+y=para(left,y,usable,"V1 misses: G23 and G29; S03, S04, S09, S11, S14, S15, S18 and S23. These cover the 1-rupee KitePay route, holiday-date adjustment, unknown-ID handoff, third verification mismatch, frozen statements, crisis phrasing, calendar fallback and outage, harmful wording, and failed-field-only retry. V2 closes all ten locally.",9.8,13.2)
 footing(4)
 
 # 5. Safety.
@@ -160,7 +160,7 @@ items=[
 y=table(y,[106,116,usable-222],["Guardrail","Type and scope","Outcome and observed local behavior"],items,9.15,12.2,6)-19
 y=sub(y,"Voice privacy and layered crisis handling")
 y=para(left,y,usable,"A raw digit pattern cannot match a card spoken entirely as words. The local guard normalizes digit words for detection and preserves a legitimate four-digit ending. In the audio probe, unconstrained recognition rendered four spoken digits as 4532. The service vocabulary returned the words.",10,14)-12
-y=para(left,y,usable,"Both agent instructions and the native crisis guardrail use the same response string. G24 and G25 exercise the entry and mid-statement cases. S10 exercises a paraphrase. Studio must still confirm that a native immediate response and its terminal handoff both fire on the same turn.",10,14)-11
+y=para(left,y,usable,"Both agent instructions and the native crisis guardrail use the same response string. G24 and G25 exercise entry and mid-statement cases. S11 exercises a paraphrase. Studio must still confirm that a native immediate response and its terminal handoff both fire on the same turn.",10,14)-11
 note(y,"All 15 local catch, control and paraphrase checks passed. The local pattern matcher covers the tested wording. The behavior of the provider's model safety and prompt guard still needs a hosted run.")
 footing(5)
 
@@ -188,13 +188,13 @@ y=head(7,"Release state and limitations","The completed browser desk, local impl
 y=sub(y,"What can be reproduced")
 y=table(y,[160,usable-160],["Artifact","Evidence and scope"],[
  ("Local builds","The local-v1 Git tag preserves the baseline. evidence/local-v1.json and local-v2.json carry identical test-specification hashes and each case outcome."),
- ("Studio packages","Separate V1 and V2 archives contain two agents, instructions, Python tools, five guardrails and 53 evaluation definitions. RosterPending identifies a build made before the team number was supplied."),
+ ("Studio packages","Separate V1 and V2 archives contain two agents, instructions, Python tools, five guardrails and 56 evaluation definitions. RosterPending identifies a build made before the team number was supplied."),
  ("Audio and guardrails","evidence/local-audio.json contains every synthetic turn, ASR transcript and reply. evidence/local-guardrails.json records observed trigger and control results."),
  ("Business data","Fixtures contain invented customers and account endings. Local SQLite prevents a second statement reservation across calls. Studio uses a seeded already-sent date and simulated queues."),
- ("External advisory","The live GOV.UK JSON endpoint returned HTTP 200 during development. BankWire uses England and Wales for its fictional UK clearing leg. India branch opening hours are outside this feed.")],9.5,13,6)-17
+ ("External advisory","The Vercel API validates live GOV.UK data and has a bundled cache. BankWire uses England and Wales for the fictional UK clearing leg. India branch opening hours are outside this feed.")],9.5,13,6)-17
 y=sub(y,"Hosted evidence still outstanding")
-y=para(left,y,usable,"The authenticated CES request for campusbite-ai-practice in the US region was denied because of billing. All 24 projects visible to the signed-in account reported billing disabled. There are no hosted pass rates, team console screenshots or live human-spoken test results to report.",10.3,14.6)-12
-y=para(left,y,usable,"After access is restored, save and evaluate V1 and V2 in the same application. Capture the full-screen Versions pane and both run results. Record five spoken calls, reconcile any new failures and add the confirmed team number and actual contributions before submission.",10.3,14.6)-14
+y=para(left,y,usable,"The available billing notice says trial activation requires prepayment. Although the native Builder screenshot confirms the `harbour-trust-voice-helpline` project in region `us`, the billing link and hosted write access are unverified. No detailed Studio result pane, hosted pass rate, managed V1/V2 record or five live spoken call outcomes were captured.",10.3,14.6)-12
+y=para(left,y,usable,"When the course project can write in Studio, save and evaluate V1 and V2 in the same application. Capture the full-screen Versions pane and both run results. Record five spoken calls, reconcile any new failures and add the confirmed team number and actual contributions before submission.",10.3,14.6)-14
 y=sub(y,"Implementation references")
 link(left,y-7,"Google Cloud   /   Studio import format","https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/reference/export")
 link(left,y-23,"Google Cloud   /   Evaluations","https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/evaluation")
@@ -217,14 +217,32 @@ def screenshot_page(number, title, intro, file, caption, detail):
     link(left,y-17,"Open the live browser demonstration","https://harbour-trust-voice-capstone-10.vercel.app/")
     footing(number)
 
-screenshot_page(8,"Verified balance handoff",
-    "A browser call ran the V2 Python implementation from the project's Studio package. The caller used fictional customer HT4102 and confirmed the four-digit ending before asking for a balance.",
-    "balance-handoff.jpg","Figure 1. The desk returned 18,420 rupees and recorded an Instant Pay handoff tagged balance.",
-    "The screenshot captures the completed conversation and routing result. The call used typed inputs. A separate privacy probe in the repository records the desk withholding a PIN given as digit words.")
+def build_and_balance_page():
+    y=head(8,"Studio build and browser balance call","The Studio image is a genuine capture of the configured Build canvas. The browser image shows a completed fictional balance call; neither image represents a Studio Evaluate score.")
+    studio=ImageReader(str(ROOT/"evidence"/"studio"/"build-agent-flow.png"))
+    iw,ih=studio.getSize();scale=min(usable/iw,270/ih);w,h=iw*scale,ih*scale
+    x=(W-w)/2;c.drawImage(studio,x,y-h,w,h)
+    c.setStrokeColor(rgb(line));c.rect(x,y-h,w,h,fill=0,stroke=1)
+    y=para(left,y-h-10,usable,"Figure 1. Native CX Agent Studio Build view with two agents, tools, guardrails and callbacks.",9.5,12,bold=True)-16
+    gap=16;col=(usable-gap)/2;balance=ImageReader(str(ROOT/"evidence"/"browser"/"balance-handoff-panel.jpg"))
+    iw,ih=balance.getSize();scale=min(col/iw,146/ih);w,h=iw*scale,ih*scale
+    c.drawImage(balance,left,y-146+(146-h)/2,w,h)
+    c.setStrokeColor(rgb(line));c.rect(left,y-146,col,146,fill=0,stroke=1)
+    x=left+col+gap
+    text_y=para(x,y-4,col,"Figure 2. Browser V2 demo",10.1,13,teal,bold=True)-6
+    text_y=para(x,text_y,col,"The demo returned 18,420 rupees for fictional caller HT4102 and recorded an Instant Pay handoff.",9.7,13)-7
+    text_y=para(x,text_y,col,"The Studio notification reports a scheduled run completed, but no detailed result pane was available. No hosted pass rate is claimed.",9.7,13)-8
+    y=min(y-153,text_y)-10
+    y=para(left,y,usable,"The browser call used typed replies. The account and identity values are fictional.",9.4,12)-6
+    link(left,y,"Open the original Studio screenshot","https://github.com/Sahil-2006/Bank-Account-Services-Voice-Helpline/blob/main/evidence/studio/build-agent-flow.png")
+    link(left,y-17,"Open the live browser demonstration","https://harbour-trust-voice-capstone-10.vercel.app/")
+    footing(8)
+
+build_and_balance_page()
 screenshot_page(9,"Observed regression pass rates",
-    "Both packaged builds ran against all 53 fixed transcripts in the public browser demo. This screenshot was captured on the production site after the run completed. The figures match the independent local replay.",
-    "regression-results.jpg","Figure 2. V1 passed 51 of 53 cases (96.2%). V2 passed 53 of 53 (100.0%).",
-    "V1 missed the crisis wording in S10 and routed the harm request in S16 to a representative. V2 passed both cases and retained the other 51 passes. These percentages measure deterministic transcript replay. Google-hosted Evaluate rates have yet to be measured.")
+    "Both packaged builds ran against 56 fixed transcripts in the public browser demo. This production screenshot records local browser replay after completion and agrees with the independent Python replay.",
+    "regression-results.jpg","Figure 3. V1 passed 46 of 56 cases (82.1%). V2 passed 56 of 56 (100.0%).",
+    "The V1 baseline missed G23 and G29 plus scenarios S03, S04, S09, S11, S14, S15, S18 and S23. V2 passed them all. These are deterministic local replay rates. Google-hosted Evaluate rates have not been measured.")
 
 def studio_illustration(slug,title,columns,records):
     width,height=usable,133

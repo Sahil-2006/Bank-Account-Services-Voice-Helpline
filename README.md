@@ -8,8 +8,8 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 | File | Contents |
 | --- | --- |
-| [Project report](submission/Capstone10_Report.pdf) | Ten pages covering architecture, traceability, evaluation, guardrails, voice transcripts and limitations. Pages 8 and 9 contain genuine browser screenshots. Page 10 illustrates the three outstanding Studio captures. |
-| [Requirements and Test Data](submission/Requirements%20and%20Test%20Data.xlsx) | The template headings, 15 user stories, 48 edge cases, 55 fictional data rows and coverage checks. |
+| [Project report](submission/Capstone10_Report.pdf) | Ten pages covering architecture, traceability, evaluation, guardrails, voice transcripts and limitations. Page 8 contains the actual Studio Build screenshot and a production browser call; page 9 shows the current 56-case browser replay. Page 10 marks the missing Studio evidence as illustrations. |
+| [Requirements and Test Data](submission/Requirements%20and%20Test%20Data.xlsx) | The template headings, 15 user stories, all 30 PDF edge cases plus 18 supplementary checks, 56 transcript records and coverage checks. |
 | [Team contribution note](submission/Contribution-note.md) | Four editable paragraphs awaiting the actual roster and individual contributions. |
 | [Offline backup video](demo/HarbourTrust-offline.mp4) | A 49-second narrated balance call using actual local speech-recognition results and a fictional customer. For demo backup. |
 | [V1 package](studio/packages/HarbourTrust-V1.zip) · [V2 package](studio/packages/HarbourTrust-V2.zip) | Studio-format archives containing both agents, Python tools, an OpenAPI calendar, guardrails and evaluation definitions. |
@@ -40,12 +40,12 @@ The hosted demo reads `FISH_AUDIO_API_KEY` from the Vercel **Production** enviro
 
 | Check | Result |
 | --- | --- |
-| Local transcript suite, baseline | 51/53 (96.2%). The two failures are preserved in [the baseline evidence](evidence/local-v1.json). |
-| Local transcript suite, revised | 53/53 (100%). Includes 29 golden and 24 scenario specifications. [Per-case results](evidence/local-v2.json). |
-| Exported Python tools with a local Studio context double | V1 reproduced both failures. V2 passed all 53 cases. [Package replay](evidence/package-replay.json). |
+| Local transcript suite, baseline | 46/56 (82.1%). Ten baseline misses are recorded in [the baseline evidence](evidence/local-v1.json). |
+| Local transcript suite, revised | 56/56 (100%). Includes 29 golden and 27 scenario specifications. [Per-case results](evidence/local-v2.json). |
+| Exported Python tools with a local Studio context double | V1 replayed 46/56; V2 passed 56/56. [Package replay](evidence/package-replay.json). |
 | Local guardrail probes | 15/15 across five guardrails, including harmless controls and paraphrases. [Probe results](evidence/local-guardrails.json). |
 | Synthetic audio through Windows ASR | 4/5 expected outcomes. Recognition of a request during overlapping speech failed. [Audio transcripts and replies](evidence/local-audio.json). |
-| GOV.UK holiday endpoint | Live response returned 83 England and Wales events; every event had a date and title. This confirms the public endpoint response, not invocation from CX Agent Studio. [Endpoint check](evidence/calendar-endpoint.json). |
+| GOV.UK holiday endpoint | The Vercel API returns validated live data or a bundled cache. Local replay confirms date adjustment and a technical handoff if both sources fail. Studio OpenAPI invocation remains unverified. [Endpoint check](evidence/calendar-endpoint.json). |
 
 ```sh
 python -m evaluation.run
@@ -58,11 +58,11 @@ To reproduce the acoustic probes on Windows, run `powershell.exe -NoProfile -Fil
 
 ## Use CX Agent Studio
 
-The V1 application was imported into project `harbour-trust-voice-helpline` in region `us`. The native builder displays the root desk and Account Service agents. On 18 November 2026, Studio preview returned `RESOURCE_EXHAUSTED`, and Evaluate denied project writes with a prompt to check billing. The Harbour Trust project still showed trial setup; the visible billing account had a payment issue and a prepayment notice, so an active billing link to this project was not verified. No payment, trial, or new account was initiated. Hosted evaluation scores, managed V1/V2 version records, five human-spoken Studio calls and Google Classroom submission remain pending. Team number and individual contributions also await confirmation. The archives use **RosterPending** as a temporary label.
+The native builder screenshot shows the Harbour Trust root desk and Account Service agents in project `harbour-trust-voice-helpline`, region `us`. A completed-scenario notification is visible, but no detailed result pane was captured, so no Studio score is claimed. The available billing notice says trial activation requires prepayment; an active billing link to this project has not been verified. Hosted V1/V2 Evaluate scores, managed version records, five human-spoken Studio calls and Google Classroom submission remain pending. Team number and individual contributions also await confirmation. The archives use **RosterPending** as a temporary label.
 
-The initial import omitted the holiday API tool. The rebuilt archives now reference included OpenAPI schema and fake-response files, and the package verifier checks those references and executes the fake calendar responses. Both corrected archives pass local replay. Hosted acceptance of the correction remains unverified.
+The initial import omitted the holiday API tool. The rebuilt archives reference included OpenAPI schema and fake-response files, and the package verifier checks those references and executes the fake calendar responses. V2 passes all 56 local replays; hosted acceptance of the correction remains unverified.
 
-The native screenshots record the imported flow and the evaluation access denial. A completed-run notification is visible, but detailed scores could not be retrieved. [Imported agent flow](evidence/studio/imported-agent-flow.jpg) · [Evaluation access state](evidence/studio/evaluation-access.jpg)
+The native captures record the configured Build canvas and the billing-related Evaluate access state. A completed-scenario notification is visible in the latest Build capture, but no detailed results are shown. [Current Studio Build capture](evidence/studio/build-agent-flow.png) · [Earlier imported flow](evidence/studio/imported-agent-flow.jpg) · [Evaluate access state](evidence/studio/evaluation-access.jpg)
 
 With a billing-enabled course project, the CES API enabled, a signed-in `gcloud` CLI and suitable CES permissions, the publisher builds team-named packages from the source, imports a new application, creates the suite, saves V1, evaluates it, updates its tools, saves V2 and evaluates it. It sets the external calendar fake for the evaluated snapshots and restores live calendar mode on the draft. Keep the generated local checkpoint to resume a run. Hosted service use can incur Google Cloud charges.
 
@@ -81,7 +81,7 @@ For the live assessment, open the team's Studio application. Capture the full-sc
 
 ## Service boundaries
 
-Customer and account records are fictional. Handoffs record a destination and routing tags. The project has no real bank, telephone queue or statement delivery backend. The local ledger enforces the same-day rule across calls. Studio fixtures model a previously sent statement. Only the fictional BankWire UK clearing leg consults the public England and Wales calendar. A failed calendar lookup preserves the account result and produces a short availability message.
+Customer and account records are fictional. Handoffs record a destination and routing tags. The project has no real bank, telephone queue or statement delivery backend. The local ledger enforces the same-day rule across calls. Studio fixtures model a previously sent statement. Only the fictional BankWire UK clearing leg consults the public England and Wales calendar. Live calendar data is validated; a bundled snapshot is used if the endpoint is unavailable, and a technical handoff occurs if both sources fail.
 
 The voice pack targets English. The offline grammar recognizes a limited set of spoken dates and amounts. The provider’s native guardrail ordering, voice interruptions and managed evaluation metrics still require a hosted test.
 

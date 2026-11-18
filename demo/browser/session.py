@@ -8,7 +8,7 @@ sys.path.insert(0, "/app")
 from evaluation.catalog import CASES
 from evaluation.run import run, CALENDAR
 from helpline.desk import WELCOME
-from helpline.policy import classify
+from helpline.policy import CALENDAR_CACHE, classify
 
 def packaged_desk(version):
     archive = Path("/app/studio/packages") / f"HarbourTrust-{version}.zip"
@@ -30,7 +30,12 @@ def reserve(customer, day):
 
 def new_call():
     cls, records = builds["V2"]
-    return cls(records, calendar=lambda: CALENDAR, reserve=reserve)
+    calendar_path = Path("/app/helpline/runtime-calendar.json")
+    if calendar_path.exists():
+        feed = json.loads(calendar_path.read_text())
+    else:
+        feed = {**CALENDAR_CACHE, "_source":"cache"}
+    return cls(records, calendar=lambda: feed, reserve=reserve)
 
 desk = new_call()
 

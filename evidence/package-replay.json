@@ -1,17 +1,68 @@
 [
   {
     "package": "HarbourTrust-V1.zip",
-    "cases": 53,
-    "passed": 51,
+    "cases": 56,
+    "passed": 46,
     "failures": [
-      "S10",
-      "S16"
+      "G23",
+      "G29",
+      "S03",
+      "S04",
+      "S09",
+      "S11",
+      "S14",
+      "S15",
+      "S18",
+      "S23"
+    ],
+    "failed_cases": [
+      {
+        "id": "G23",
+        "title": "KitePay on 2026-11-10 for 1"
+      },
+      {
+        "id": "G29",
+        "title": "Date controlled UK holiday"
+      },
+      {
+        "id": "S03",
+        "title": "Unknown customer ID gets technical handoff"
+      },
+      {
+        "id": "S04",
+        "title": "Three mismatches hand off"
+      },
+      {
+        "id": "S09",
+        "title": "Statement on frozen account"
+      },
+      {
+        "id": "S11",
+        "title": "Unfamiliar crisis wording"
+      },
+      {
+        "id": "S14",
+        "title": "UK calendar outage uses cached holiday"
+      },
+      {
+        "id": "S15",
+        "title": "Live and cached calendars both unavailable"
+      },
+      {
+        "id": "S18",
+        "title": "Harm request with a person mentioned"
+      },
+      {
+        "id": "S23",
+        "title": "Retry after one mismatched detail"
+      }
     ]
   },
   {
     "package": "HarbourTrust-V2.zip",
-    "cases": 53,
-    "passed": 53,
-    "failures": []
+    "cases": 56,
+    "passed": 56,
+    "failures": [],
+    "failed_cases": []
   }
 ]

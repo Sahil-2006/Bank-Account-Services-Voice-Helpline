@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from zipfile import ZipFile
 from .catalog import CASES, ROOT, ROWS
 from helpline.desk import Desk
 from helpline.policy import TERMS
@@ -29,12 +30,22 @@ def run(c, desk_type=Desk):
             "failed":[k for k,v in checks.items() if not v],"actual":last,"handoff":transfer,
             "tool_calls":desk.trace}
 
+def packaged_desk(version):
+    archive = ROOT / "studio" / "packages" / f"HarbourTrust-{version}.zip"
+    with ZipFile(archive) as bundle:
+        path = next(p for p in bundle.namelist() if p.endswith("/tools/verify_identity/python_function/python_code.py"))
+        module = {}
+        exec(compile(bundle.read(path),path,"exec"),module)
+    return module["Desk"]
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--output",type=Path)
+    p.add_argument("--build",choices=("current","V1","V2"),default="current")
     a=p.parse_args()
-    results=[run(c) for c in CASES]
-    data={"execution":"local deterministic transcript replay","cases_sha256":hashlib.sha256(json.dumps(CASES,sort_keys=True).encode()).hexdigest(),
+    desk_type=Desk if a.build=="current" else packaged_desk(a.build)
+    results=[run(c,desk_type=desk_type) for c in CASES]
+    data={"execution":f"local deterministic transcript replay ({a.build})","cases_sha256":hashlib.sha256(json.dumps(CASES,sort_keys=True).encode()).hexdigest(),
           "total":len(results),"passed":sum(r["passed"] for r in results),"results":results}
     print(f"{data['passed']}/{data['total']} local transcript cases passed")
     for r in results:

@@ -1,6 +1,6 @@
 """Deterministic rules shared by the local desk and the Studio tool builder."""
 import re
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation, ROUND_CEILING
 
 NOW = "2026-11-10T09:00:00+05:30"
@@ -15,6 +15,17 @@ OUTSIDE = "I can help with bank account services. Would you like a person?"
 DIGITS = "zero one two three four five six seven eight nine".split()
 DIGIT_MAP = {**{word: str(i) for i, word in enumerate(DIGITS)}, "oh": "0"}
 NOW_DAY = NOW[:10]
+
+# Bundled England and Wales snapshot for the fictional UK clearing leg. The
+# Vercel calendar route tries GOV.UK first and returns this snapshot on failure.
+CALENDAR_CACHE = {"england-and-wales":{"events":[
+    {"date":"2026-01-01"},{"date":"2026-04-03"},{"date":"2026-04-06"},
+    {"date":"2026-05-04"},{"date":"2026-05-25"},{"date":"2026-08-31"},
+    {"date":"2026-12-25"},{"date":"2026-12-28"},{"date":"2027-01-01"},
+    {"date":"2027-03-26"},{"date":"2027-03-29"},{"date":"2027-05-03"},
+    {"date":"2027-05-31"},{"date":"2027-08-30"},{"date":"2027-12-27"},
+    {"date":"2027-12-28"}
+]}}
 
 def clean(text):
     return " ".join(text.lower().replace("’", "'").strip().split())
@@ -63,6 +74,8 @@ def resolve_channel(name, transfer_date):
         return "BankWire Plus" if day >= cutover else "BankWire"
     if key == "passbookexpress" and day < cutover:
         return "PassBook Express"
+    if key == "kitepay":
+        return "KitePay"
     return ""
 
 def positive(value):
@@ -102,16 +115,42 @@ def safe_output(text, allowed_money=()):
         return SAFE
     return text
 
-def uk_advisory(day, data):
-    """The fictional BankWire UK clearing leg uses England and Wales only."""
+def _calendar_date(day, data):
     try:
         target = date.fromisoformat(day)
         events = data["england-and-wales"]["events"]
         listed = {date.fromisoformat(event["date"]) for event in events}
         if target.year not in {d.year for d in listed}:
-            raise ValueError("coverage")
-        if target in listed or target.weekday() >= 5:
-            return "UK clearing may be delayed by a weekend or bank holiday."
-        return "The UK calendar shows a weekday with no listed bank holiday."
+            return None
+        candidate = target
+        for _ in range(15):
+            if candidate.weekday() < 5 and candidate not in listed:
+                return candidate
+            candidate += timedelta(days=1)
+        return None
     except (KeyError, ValueError, TypeError):
+        return None
+
+def uk_clearing_date(day, data, fallback=None):
+    """Return the next England and Wales business date from the live feed or cache."""
+    cached = CALENDAR_CACHE if fallback is None else fallback
+    source = data.get("_source", "") if isinstance(data, dict) else ""
+    if source != "cache":
+        result = _calendar_date(day, data)
+        if result:
+            return {"available":True,"date":result.isoformat(),"adjusted":result.isoformat()!=day,"source":"live"}
+    result = _calendar_date(day, cached)
+    if result:
+        return {"available":True,"date":result.isoformat(),"adjusted":result.isoformat()!=day,"source":"cache"}
+    return {"available":False,"date":"","adjusted":False,"source":"unavailable"}
+
+def uk_advisory(day, data, fallback=None):
+    result = uk_clearing_date(day,data,fallback)
+    if not result["available"]:
         return "I couldn't check the UK clearing calendar."
+    clearing = date.fromisoformat(result["date"])
+    label = f"{clearing.day} {clearing.strftime('%B %Y')}"
+    prefix = "The live GOV.UK feed was unavailable; I used the cached calendar. " if result["source"]=="cache" else ""
+    if result["adjusted"]:
+        return prefix+f"The UK clearing date moves to {label} after a weekend or bank holiday."
+    return prefix+f"The UK clearing date is {label}."

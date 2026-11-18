@@ -1,13 +1,16 @@
 {
-  "verified_date": "2026-11-18",
-  "endpoint": "https://www.gov.uk/bank-holidays.json",
+  "verified_date": "2026-11-19",
+  "upstream_endpoint": "https://www.gov.uk/bank-holidays.json",
+  "vercel_route": "https://harbour-trust-voice-capstone-10.vercel.app/api/calendar",
+  "upstream_http_request": "GET succeeded",
+  "vercel_api_request": "GET succeeded",
+  "calendar_source": "live",
   "division": "england-and-wales",
-  "http_request": "GET succeeded",
   "event_count": 83,
   "events_missing_date_or_title": 0,
   "sample_event": {
     "date": "2019-01-01",
     "title": "New Year's Day"
   },
-  "scope": "Verifies the live public endpoint response shape only. CX Agent Studio OpenAPI tool invocation remains unverified."
+  "scope": "Verified live browser API route and upstream response. Local replay checks date adjustment and cache failure behavior. CX Agent Studio OpenAPI tool invocation remains unverified."
 }

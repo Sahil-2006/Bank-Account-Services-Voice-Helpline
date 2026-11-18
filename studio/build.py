@@ -76,10 +76,10 @@ def safe_readers():
     return {"found": bool(row), "plan": row.get("plan", ""), "ending": row.get("last4", "")}
 ''',
        "read_account_status":'''def read_account_status() -> dict:
-    """Read verified status for balance and limit requests. Statements skip this check."""
+    """Read verified status before balance, statement or limit requests."""
     s = _session(context)
     row = lookup_account(s, DIRECTORY)
-    return {"status": (row.get("status") or "UNKNOWN") if row and s["intent_tag"] in ("balance","limit") else "UNAVAILABLE"}
+    return {"status": (row.get("status") or "UNKNOWN") if row and s["intent_tag"] in ("balance","statement","limit") else "UNAVAILABLE"}
 '''}
 def instruction(sub, team, child):
     shared = (
@@ -93,7 +93,7 @@ def instruction(sub, team, child):
         return ("Role\nYou are the Harbour Trust Account Service desk.\nPersona\nCalm, concise and patient on a phone line.\n"
                 "Context\nYou receive verified callers from the voice desk. Read {stage} and {intent_tag}. Every customer and queue is fictional.\n"
                 "Task\nOn entry pass on an existing response if this turn was already handled. On a fresh service selection call {@TOOL: lookup_verified_account}, "
-                "then {@TOOL: select_service}. For confirmed balance or limit requests {@TOOL: read_account_status} is available for checking status. "
+                "then {@TOOL: select_service}. For statements and confirmed balance or limit requests {@TOOL: read_account_status} is available for checking status. "
                 "At months, confirm_period or delivery use {@TOOL: statement_service}. At channel, date or amount use {@TOOL: limit_service}. "
                 "Use exactly one stage-changing tool per caller turn. Speak its say field. It handles the calendar and handoff internally. "
                 "If lookup returns found false, still call select_service to record the technical handoff. Never ask a caller to invent missing values.\n"

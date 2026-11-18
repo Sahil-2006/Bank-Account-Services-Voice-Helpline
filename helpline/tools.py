@@ -1,10 +1,11 @@
 """Rules take a server-owned session and the fictional directory as inputs."""
+import re
 from .policy import NOW, TECH, as_digits, charge, compact_digits, positive, resolve_channel, clean
 
 def fresh():
     return dict(verified=False, customer_id="", account_type="", intent_tag="", channel="",
                 attempts=0, unclear=0, now_override=NOW, handoff={}, pending={}, quote={},
-                stage="id", candidate="", ending="", dob="", period="", delivery="", offered=False)
+                stage="id", candidate="", ending="", dob="", retry_stage="", period="", delivery="", offered=False)
 
 def finish(s, destination, reason, channel=""):
     if not s["handoff"]:
@@ -22,21 +23,33 @@ def verify_caller(s, directory, customer_id, dob, last_four):
         return {"result":"verified"}
     key = compact_digits(customer_id).upper()
     try:
-        rows = [r for r in directory if r["id"] == key and r["dob"] == dob and r["last4"] == compact_digits(last_four)]
+        rows = [r for r in directory if r["id"] == key]
     except (OSError, TypeError, KeyError):
         finish(s,"human","lookup")
         return {"result":"technical"}
-    s["attempts"] += 1
-    if len(rows) == 1 and rows[0]["customer_status"] == "ACTIVE":
-        s.update(verified=True, customer_id=key, ending=rows[0]["last4"], stage="service")
-        return {"result":"verified"}
-    if len(rows) == 1 and rows[0]["customer_status"] == "BLOCKED":
+    if len(rows) != 1:
+        finish(s,"human","lookup")
+        return {"result":"technical"}
+    row = rows[0]
+    failed_fields = []
+    if row.get("dob") != dob:
+        failed_fields.append("dob")
+    if row.get("last4") != compact_digits(last_four):
+        failed_fields.append("ending")
+    if not failed_fields and row.get("customer_status") == "BLOCKED":
         finish(s,"human","restricted")
         return {"result":"human"}
+    if not failed_fields and row.get("customer_status") != "ACTIVE":
+        finish(s,"human","lookup")
+        return {"result":"technical"}
+    s["attempts"] += 1
+    if not failed_fields:
+        s.update(verified=True, customer_id=key, ending=row["last4"], stage="service", attempts=0, retry_stage="")
+        return {"result":"verified"}
     if s["attempts"] >= 3:
         finish(s,"human","verification")
         return {"result":"human"}
-    return {"result":"retry"}
+    return {"result":"retry","failed_fields":failed_fields}
 
 def lookup_account(s, directory):
     if not s["verified"] or s["handoff"]:
@@ -54,8 +67,8 @@ def lookup_account(s, directory):
 def check_status(s, row):
     if not row:
         return False
-    if s["intent_tag"] != "statement" and row["status"] != "ACTIVE":
-        reason = "status" if row["status"] in ("FROZEN","DORMANT") else "unknown_status"
+    if row.get("status") != "ACTIVE":
+        reason = "status" if row.get("status") in ("FROZEN","DORMANT") else "unknown_status"
         finish(s,"human",reason)
         return False
     return True
@@ -72,6 +85,8 @@ def quote_balance(s, rows):
 def quote_statement(s, rows, months, delivery, sent_today=False):
     row = lookup_account(s, rows)
     if not row or s["intent_tag"] != "statement":
+        return {}
+    if not check_status(s,row):
         return {}
     if sent_today or row["last_sent"] == s["now_override"][:10]:
         finish(s,"human","already_sent")
@@ -92,6 +107,11 @@ def check_limit(s, rows, amount, channel, transfer_date):
     cap = {"Basic":25000, "Premium":100000}.get(row["plan"])
     if cap is None:
         finish(s,"human","unknown_plan")
+        return {}
+    value = positive(amount) if amount != "" else None
+    key = re.sub(r"[\s-]+", "", clean(channel))
+    if key == "kitepay" and (value is None or value > 1):
+        finish(s,"human","unsupported_channel")
         return {}
     if not resolve_channel(channel, transfer_date):
         finish(s,"human","unsupported_channel")
@@ -121,6 +141,7 @@ def human_message(s):
                    "already_sent":"A statement was already sent today.",
                    "archive":"This period needs help from a colleague.",
                    "above_limit":"That amount exceeds the daily limit.",
-                   "unsupported_channel":"That channel is unavailable for this transfer.",
+                   "calendar":"I couldn't check the UK clearing calendar.",
+                   "unsupported_channel":"That channel is unavailable for this transfer. Available channels are Instant Pay, BankWire (BankWire Plus from 1 January 2027), PassBook Express through 31 December 2026, and KitePay for 1-rupee micro-payments.",
                    "status":"This account needs help from a colleague."}
     return from_reason.get(s["handoff"].get("reason"),"")

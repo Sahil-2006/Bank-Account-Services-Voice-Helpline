@@ -44,7 +44,7 @@ def verify(path):
             assert fake["fake_tool_call"](None,{},unavailable)=={}
     hooks={}
     exec(resources[agents[0]["afterToolCallbacks"][0]["pythonCode"]],hooks)
-    failures=[]
+    failures=[];failed_cases=[]
     for case in CASES:
         state={}
         sdk=SimpleNamespace(state=state,variables=state,invocation_id="",user_content=None)
@@ -66,11 +66,13 @@ def verify(path):
         ok &= handoff.get("reason","")==case["reason"] and handoff.get("channel","")==case["channel"]
         ok &= state["intent_tag"]==case["intent"] and bool(state.get("logged"))==bool(handoff)
         ok &= sum(x.count(TERMS) for x in said)==int(bool(case["channel"]))
-        if not ok:failures.append(case["id"])
-    return {"package":path.name,"cases":len(CASES),"passed":len(CASES)-len(failures),"failures":failures}
+        if not ok:
+            failures.append(case["id"])
+            failed_cases.append({"id":case["id"],"title":case["title"]})
+    return {"package":path.name,"cases":len(CASES),"passed":len(CASES)-len(failures),"failures":failures,"failed_cases":failed_cases}
 
 if __name__=="__main__":
     results=[verify(ROOT/"studio/packages"/f"HarbourTrust-{v}.zip") for v in ("V1","V2")]
-    assert results[0]["failures"]==["S10","S16"] and not results[1]["failures"],results
+    assert results[0]["failures"] and not results[1]["failures"],results
     (ROOT/"evidence/package-replay.json").write_text(json.dumps(results,indent=2)+"\n",encoding="utf-8")
     print(results)

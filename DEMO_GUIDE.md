@@ -9,6 +9,8 @@ This guide shows the working no-billing project and clearly separates local evid
 3. If the computer is not prepared, use the [hosted browser demo](https://harbour-trust-voice-capstone-10.vercel.app/). It runs the same packaged local Python builds in the browser.
 4. Use only the fictional caller details shown in the demo. Never enter real bank or identity information.
 
+If the status says **Loading** and the reply field is disabled, the browser is still starting its Python runtime and loading the two packages. Wait for **Ready · V2** before typing. The first load can take about a minute on a slow connection. If it remains stuck, refresh once; if it still does not become ready, double-click `RUN_DEMO.bat` to use the local copy.
+
 ## Presentation sequence
 
 ### 1. Introduce the project
@@ -29,9 +31,7 @@ For a live typed rehearsal, start a new call and enter those same five replies o
 
 1. Open **Regression suite**.
 2. Click **Run both versions** and wait for the results.
-3. Explain the actual browser-suite result: V1 baseline **51/53 (96.2%)**; revised V2 **53/53 (100%)**. The two retained V1 failures are S10 (unfamiliar crisis wording) and S16 (harm request with a person mentioned); V2 resolves them.
-
-These are local browser regression results. They are not CX Agent Studio Evaluate scores.
+3. Explain the local browser-suite result: V1 baseline **46/56 (82.1%)**; revised V2 **56/56 (100%)**. V1 misses G23 and G29 plus scenarios S03, S04, S09, S11, S14, S15, S18 and S23. They cover KitePay and holiday handling, unknown IDs and retries, frozen statements, crisis wording and harmful requests. V2 resolves all ten. These are local replay results, not CX Agent Studio Evaluate scores.
 
 ### 4. Show guardrail evidence
 
@@ -42,8 +42,8 @@ These are local browser regression results. They are not CX Agent Studio Evaluat
 ### 5. Show the calendar integration work
 
 1. Open `evidence/calendar-endpoint.json`. It records a live GET to the GOV.UK calendar returning 83 England and Wales events, each with a date and title.
-2. Explain that the exported Studio package includes an OpenAPI schema and a local fake response for deterministic package replay.
-3. Be precise: the public endpoint and package references have been checked, but a live invocation from CX Agent Studio has not been verified.
+2. Explain that the browser calls the Vercel calendar API, which validates live data and falls back to a bundled holiday snapshot. The rules shift a requested weekend or holiday to the next business day.
+3. The exported Studio package includes an OpenAPI schema and fake response for deterministic replay. A live invocation from CX Agent Studio has not been verified.
 
 ### 6. Demonstrate a spoken call
 
