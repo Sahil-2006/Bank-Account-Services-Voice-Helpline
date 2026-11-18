@@ -18,6 +18,8 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 On Windows, double-click [RUN_DEMO.bat](RUN_DEMO.bat) to open the browser desk locally. Use the “Run example call” button for the balance handoff, or choose “Regression suite” and run both versions. Keep the server window open during the demo and press Ctrl+C in it to stop the server. Double-click [RUN_CHECKS.bat](RUN_CHECKS.bat) to run all four local check groups.
 
+For a presentation sequence, expected outputs, and the Studio-only items that remain blocked, see the [step-by-step demo guide](DEMO_GUIDE.md).
+
 Use Python 3.10 or later from the repository root. The text desk and regression runner use the standard library.
 
 ```sh
@@ -41,6 +43,7 @@ powershell.exe -NoProfile -File voice/start.ps1
 | Exported Python tools with a local Studio context double | V1 reproduced both failures. V2 passed all 53 cases. [Package replay](evidence/package-replay.json). |
 | Local guardrail probes | 15/15 across five guardrails, including harmless controls and paraphrases. [Probe results](evidence/local-guardrails.json). |
 | Synthetic audio through Windows ASR | 4/5 expected outcomes. Recognition of a request during overlapping speech failed. [Audio transcripts and replies](evidence/local-audio.json). |
+| GOV.UK holiday endpoint | Live response returned 83 England and Wales events; every event had a date and title. This confirms the public endpoint response, not invocation from CX Agent Studio. [Endpoint check](evidence/calendar-endpoint.json). |
 
 ```sh
 python -m evaluation.run
@@ -53,7 +56,7 @@ To reproduce the acoustic probes on Windows, run `powershell.exe -NoProfile -Fil
 
 ## Use CX Agent Studio
 
-The V1 application was imported into project `harbour-trust-voice-helpline` in region `us`. The native builder displays the root desk and Account Service agents. On 18 November 2026, Studio returned a billing-related access denial and Cloud Billing showed no linked account for this project. Hosted evaluation scores, managed V1/V2 version records, five human-spoken Studio calls and Google Classroom submission remain pending. Team number and individual contributions also await confirmation. The archives use **RosterPending** as a temporary label.
+The V1 application was imported into project `harbour-trust-voice-helpline` in region `us`. The native builder displays the root desk and Account Service agents. On 18 November 2026, Studio preview returned `RESOURCE_EXHAUSTED`, and Evaluate denied project writes with a prompt to check billing. The Harbour Trust project still showed trial setup; the visible billing account had a payment issue and a prepayment notice, so an active billing link to this project was not verified. No payment, trial, or new account was initiated. Hosted evaluation scores, managed V1/V2 version records, five human-spoken Studio calls and Google Classroom submission remain pending. Team number and individual contributions also await confirmation. The archives use **RosterPending** as a temporary label.
 
 The initial import omitted the holiday API tool. The rebuilt archives now reference included OpenAPI schema and fake-response files, and the package verifier checks those references and executes the fake calendar responses. Both corrected archives pass local replay. Hosted acceptance of the correction remains unverified.
 

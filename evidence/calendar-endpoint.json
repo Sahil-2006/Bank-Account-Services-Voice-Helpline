@@ -1,0 +1,13 @@
+{
+  "verified_date": "2026-11-18",
+  "endpoint": "https://www.gov.uk/bank-holidays.json",
+  "division": "england-and-wales",
+  "http_request": "GET succeeded",
+  "event_count": 83,
+  "events_missing_date_or_title": 0,
+  "sample_event": {
+    "date": "2019-01-01",
+    "title": "New Year's Day"
+  },
+  "scope": "Verifies the live public endpoint response shape only. CX Agent Studio OpenAPI tool invocation remains unverified."
+}
