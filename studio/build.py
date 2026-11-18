@@ -166,9 +166,12 @@ def build(team,version,out):
         put(file,code+"\n"+func)
         obj("tools",n,{"displayName":n,"pythonFunction":{"name":n,"pythonCode":file}})
     calendar_name="uk_bank_holidays"
-    # OpenAPI schema and fake code are embedded for the singular OpenAPI tool.
-    obj("tools",calendar_name,{"displayName":calendar_name,"openApiTool":{"name":calendar_name,"openApiSchema":json.dumps(advisory_spec())},
-         "toolFakeConfig":{"enableFakeMode":False,"codeBlock":{"pythonCode":"def fake_tool_call(tool, input, callback_context):\n    if callback_context.variables.get('calendar_unavailable',False):\n        return {}\n    return "+repr(CALENDAR)+"\n"}}})
+    schema_path=f"tools/{calendar_name}/open_api_tool/open_api_schema.yaml"
+    fake_path=f"tools/{calendar_name}/tool_fake_config/code_block/python_code.py"
+    put(schema_path,advisory_spec())
+    put(fake_path,"def fake_tool_call(tool, input, callback_context):\n    if callback_context.variables.get('calendar_unavailable',False):\n        return {}\n    return "+repr(CALENDAR)+"\n")
+    obj("tools",calendar_name,{"displayName":calendar_name,"openApiTool":{"name":calendar_name,"openApiSchema":schema_path},
+         "toolFakeConfig":{"enableFakeMode":False,"codeBlock":{"pythonCode":fake_path}}})
     for sub,agent in [(False,name),(True,child)]:
         slug=re.sub("[^A-Za-z0-9_]+","_",agent)
         path=f"agents/{slug}/instruction.txt"

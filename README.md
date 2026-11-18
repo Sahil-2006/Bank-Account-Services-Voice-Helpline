@@ -51,7 +51,11 @@ To reproduce the acoustic probes on Windows, run `powershell.exe -NoProfile -Fil
 
 ## Use CX Agent Studio
 
-The project currently has no hosted run. The signed-in account’s accessible projects had billing disabled, and the selected project's regional CES endpoint returned HTTP 403. Team number and member details are pending. The two downloadable archives use **RosterPending** as a temporary label. Google Classroom submission, native version screenshots, hosted evaluation scores and five human-spoken Studio calls remain outstanding.
+The V1 application was imported into project `harbour-trust-voice-helpline` in region `us`. The native builder displays the root desk and Account Service agents. On 18 November 2026, Studio returned a billing-related access denial and Cloud Billing showed no linked account for this project. Hosted evaluation scores, managed V1/V2 version records, five human-spoken Studio calls and Google Classroom submission remain pending. Team number and individual contributions also await confirmation. The archives use **RosterPending** as a temporary label.
+
+The initial import omitted the holiday API tool. The rebuilt archives now reference included OpenAPI schema and fake-response files, and the package verifier checks those references and executes the fake calendar responses. Both corrected archives pass local replay. Hosted acceptance of the correction remains unverified.
+
+The native screenshots record the imported flow and the evaluation access denial. A completed-run notification is visible, but detailed scores could not be retrieved. [Imported agent flow](evidence/studio/imported-agent-flow.jpg) · [Evaluation access state](evidence/studio/evaluation-access.jpg)
 
 With a billing-enabled course project, the CES API enabled, a signed-in `gcloud` CLI and suitable CES permissions, the publisher builds team-named packages from the source, imports a new application, creates the suite, saves V1, evaluates it, updates its tools, saves V2 and evaluates it. It sets the external calendar fake for the evaluated snapshots and restores live calendar mode on the draft. Keep the generated local checkpoint to resume a run. Hosted service use can incur Google Cloud charges.
 

@@ -32,6 +32,16 @@ def verify(path):
     for tool in tools:
         pf=tool.get("pythonFunction")
         if pf:library[tool["displayName"]]=compile(resources[pf["pythonCode"]],pf["pythonCode"],"exec")
+        api=tool.get("openApiTool")
+        if api:
+            schema=json.loads(resources[api["openApiSchema"]])
+            assert schema["paths"]["/bank-holidays.json"]["get"]["operationId"]==api["name"]
+            fake_path=tool["toolFakeConfig"]["codeBlock"]["pythonCode"]
+            fake={}
+            exec(compile(resources[fake_path],fake_path,"exec"),fake)
+            assert fake["fake_tool_call"](None,{},SimpleNamespace(variables={}))==CALENDAR
+            unavailable=SimpleNamespace(variables={"calendar_unavailable":True})
+            assert fake["fake_tool_call"](None,{},unavailable)=={}
     hooks={}
     exec(resources[agents[0]["afterToolCallbacks"][0]["pythonCode"]],hooks)
     failures=[]
