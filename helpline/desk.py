@@ -18,7 +18,7 @@ ASK = {"id":"What is your customer ID?", "dob":"What is your date of birth?", "e
        "open_phone":"For this demo only, enter the sample phone number 0000000000.",
        "open_dob":"For this demo only, what fictional date of birth should I use?",
        "open_aadhaar":"Aadhaar verification is simulated. Say ‘demo verified’; do not share an Aadhaar number.",
-       "open_pan":"PAN verification is simulated. Say ‘demo verified’; do not share a PAN number.",
+       "open_pan":"For this simulation only, enter the sample token DEMO-PAN. Never enter a real PAN.",
        "open_confirm":"I have the demo details. No personal details will be saved. Say yes to create a demo profile, or no to cancel.",
        "demo_service":"You can check your demo balance, make a simulated deposit or withdrawal, or say finish.",
        "demo_tx_amount":"What amount should I use for the simulated transaction? Enter a positive amount.",
@@ -26,6 +26,7 @@ ASK = {"id":"What is your customer ID?", "dob":"What is your date of birth?", "e
 YES = {"yes","yeah","correct","that's right","right","yes please","that is correct"}
 NO = {"no","incorrect","wrong","no thanks","no thank you"}
 PAN_PRIVATE = "Please keep PAN numbers private. This demo simulates identity checks and does not need a PAN number."
+DEMO_PAN = "DEMO-PAN"
 
 def parse_day(text):
     for fmt in ("%Y-%m-%d","%d/%m/%Y","%d %B %Y","%B %d %Y","%d %b %Y"):
@@ -56,7 +57,9 @@ def current_prompt(s):
     return ASK.get(s["stage"],MENU)
 
 def is_account_opening_request(text):
-    return bool(re.search(r"\b(?:open|create|start|apply for|register for)\b.{0,40}\baccount\b|\baccount opening\b",text))
+    has_action = re.search(r"\b(?:open|create|start|new|apply|register|sign\s+up)\b",text)
+    has_account = re.search(r"\b(?:bank\s+)?account\b|\baccount opening\b",text)
+    return bool(has_action and has_account)
 
 class Desk:
     def __init__(self, directory, state=None, calendar=None, reserve=None, callback=None):
@@ -78,6 +81,8 @@ class Desk:
         s["demo_record_ready"] = False
         text = clean(raw).strip("!?")
         kind = classify(text)
+        if kind == "private" and s["stage"] == "open_pan" and text.upper() == DEMO_PAN:
+            kind = ""
         if kind in ("crisis","human"):
             if not s["intent_tag"]:
                 s["intent_tag"] = intent_of(text)
@@ -250,10 +255,14 @@ class Desk:
             else:
                 return "Please give a fictional date, for example 1 January 1900. It is used only for this simulated check. "+current_prompt(s)
         elif stage in ("open_aadhaar","open_pan"):
-            if clean(text).strip(".! ") in ("demo verified","verified","skip"):
+            if stage == "open_pan" and text.upper() == DEMO_PAN:
+                s["stage"] = "open_confirm"
+            elif clean(text).strip(".! ") in ("demo verified","verified","skip"):
                 s["stage"] = "open_pan" if stage == "open_aadhaar" else "open_confirm"
             else:
-                return "For the simulation, say ‘demo verified’. Never share an Aadhaar or PAN number. "+current_prompt(s)
+                if stage == "open_aadhaar":
+                    return "For the simulation, say ‘demo verified’. Never share an Aadhaar number. "+current_prompt(s)
+                return "Use only the sample token shown in the prompt or say ‘demo verified’. Never share a real PAN. "+current_prompt(s)
         elif stage == "open_confirm":
             if text in YES:
                 s["stage"] = "demo_service"
