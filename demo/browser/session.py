@@ -41,6 +41,7 @@ desk = new_call()
 
 def respond(action, text):
     global desk
+    unrecognized = False
     if action == "suite":
         results = []
         for version, (cls, _) in builds.items():
@@ -52,7 +53,9 @@ def respond(action, text):
         desk = new_call()
         reply = WELCOME
     elif action == "turn":
+        before_stage = desk.s["stage"]
         reply = desk.turn(text)
+        unrecognized = before_stage == "service" and reply.startswith("I didn't catch the request.")
     else:
         raise ValueError("Unknown browser action")
-    return json.dumps({"reply":reply,"handoff":desk.s["handoff"],"stage":desk.s["stage"],"private":classify(text)=="private"})
+    return json.dumps({"reply":reply,"handoff":desk.s["handoff"],"stage":desk.s["stage"],"private":classify(text)=="private","unrecognized":unrecognized})
