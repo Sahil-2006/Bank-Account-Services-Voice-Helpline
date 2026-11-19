@@ -1,10 +1,11 @@
 const el = id => document.getElementById(id);
 const worker = new Worker(new URL("worker.js", import.meta.url), {type:"module"});
+const qwenWorker = new Worker(new URL("qwen.worker.js", import.meta.url), {type:"module"});
 const requests = new Map();
-let sequence = 0, ready = false, busy = true, closed = false, listening = null;
+const qwenRequests = new Map();
+let sequence = 0, qwenSequence = 0, ready = false, busy = true, closed = false, listening = null;
 let cancelListening = null, cancelSpeech = null, voiceCallActive = false;
-let fishVoiceAvailable = false, qwenAsrAvailable = false, qwenReplyAvailable = false, fishAudio = null, fishAudioUrl = null, speechController = null;
-let cancelRecording = null;
+let fishVoiceAvailable = false, fishAudio = null, fishAudioUrl = null, speechController = null;
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speech = window.speechSynthesis;
 const status = text => { el("status").textContent = text; };
@@ -31,9 +32,31 @@ worker.onerror = () => {
   for (const pending of requests.values()) pending.reject(new Error(message));
   requests.clear();
 };
+qwenWorker.onmessage = ({data}) => {
+  if (data.type === "progress") {
+    el("audio-status").textContent = data.message;
+    return;
+  }
+  const pending = qwenRequests.get(data.id);
+  if (!pending) return;
+  qwenRequests.delete(data.id);
+  if (data.error) pending.reject(new Error(data.error));
+  else pending.resolve(data.text || "");
+};
+qwenWorker.onerror = () => {
+  for (const pending of qwenRequests.values()) pending.reject(new Error("Local Qwen could not start in this browser."));
+  qwenRequests.clear();
+};
+function localQwenReply(question) {
+  return new Promise((resolve,reject) => {
+    const id = ++qwenSequence;
+    qwenRequests.set(id,{resolve,reject});
+    qwenWorker.postMessage({id,question});
+  });
+}
 function controls() {
   const voiceOutputAvailable = Boolean(speech || fishVoiceAvailable);
-  const voiceInputAvailable = Boolean(Recognition || (qwenAsrAvailable && window.MediaRecorder && navigator.mediaDevices?.getUserMedia));
+  const voiceInputAvailable = Boolean(Recognition);
   for (const id of ["reply","send","mic"]) el(id).disabled = !ready || busy || closed;
   el("mic").disabled ||= !voiceInputAvailable;
   for (const id of ["example","reset","run"]) el(id).disabled = !ready || busy;
@@ -44,7 +67,6 @@ function controls() {
   el("suite-view").disabled = busy || voiceCallActive;
 }
 function stopListening() {
-  if (cancelRecording) { const cancel = cancelRecording; cancelRecording = null; cancel(); }
   if (cancelListening) { const cancel = cancelListening; cancelListening = null; cancel(); }
   else if (listening) { listening.onresult = null; listening.abort(); listening = null; }
 }
@@ -198,141 +220,21 @@ async function listenForReply() {
   }
   return result;
 }
-function chooseRecordingType() {
-  if (!window.MediaRecorder) return "";
-  return ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus","audio/ogg"]
-    .find(type => !MediaRecorder.isTypeSupported || MediaRecorder.isTypeSupported(type)) || "";
-}
-async function transcribeClip(blob, durationMs) {
-  const audio = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("The microphone recording could not be read."));
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.readAsDataURL(blob);
-  });
-  const response = await fetch("/api/voice/asr", {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({audio,mimeType:blob.type,durationMs})
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || "Qwen transcription is unavailable.");
-  return {text:typeof result.text === "string" ? result.text.trim() : ""};
-}
 async function requestTurn(text) {
   const result = await request("turn",text);
-  if (!result.unrecognized || result.private || !qwenReplyAvailable || /\b(?:\d{4,}|\d{3}[- ]\d{3}[- ]\d{4}|\S+@\S+\.\S+)\b/.test(text)) return result;
-  el("audio-status").textContent = "Checking this unrecognized question with Qwen…";
+  if (!result.unrecognized || result.private || /\b(?:\d{4,}|\d{3}[- ]\d{3}[- ]\d{4}|\S+@\S+\.\S+)\b/.test(text)) return result;
+  el("audio-status").textContent = "Loading local Qwen for this unrecognized question…";
   try {
-    const response = await fetch("/api/voice/qwen", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({question:String(text).slice(0,600)})
-    });
-    const generated = await response.json().catch(() => ({}));
-    const answer = typeof generated.text === "string" ? generated.text.trim() : "";
+    const answer = (await localQwenReply(String(text).slice(0,600))).trim();
     const unsafe = /(?:₹|\b(?:rupees|inr|rs\.?))\s*\d|\b\d[\d,]*\s+rupees\b|\b(?:balance|fee|limit)\s+(?:is|of)\s+\d|\b(?:pin|password|otp|aadhaar|card number)\b/i.test(answer);
-    if (response.ok && answer && answer.length <= 450 && !unsafe) {
+    if (answer && answer.length <= 450 && !unsafe) {
       result.reply = answer + " " + "Would you like your balance, a statement, or a transfer limit?";
-      el("audio-status").textContent = "Qwen handled an unrecognized question; regular services still use scripted rules.";
+      el("audio-status").textContent = "Local Qwen handled an unrecognized question; regular services still use scripted rules.";
     } else {
-      el("audio-status").textContent = "Qwen could not verify an answer; the scripted service menu is shown.";
+      el("audio-status").textContent = "Local Qwen could not verify an answer; the scripted service menu is shown.";
     }
-  } catch { el("audio-status").textContent = "Qwen is unavailable; the scripted service menu is shown."; }
+  } catch { el("audio-status").textContent = "Local Qwen is unavailable; the scripted service menu is shown."; }
   return result;
-}
-function recordQwenReply(stream) {
-  return new Promise(resolve => {
-    const type = chooseRecordingType();
-    if (!type || !stream?.getAudioTracks?.().some(track => track.readyState === "live")) {
-      resolve({error:"recorder-unavailable"}); return;
-    }
-    let recorder, audioContext, analyser, timer, stopRequested = false, settled = false, stopReason = null;
-    let chunks = [], speechDetected = false, noiseFloor = 0.003, baselineSamples = 0;
-    let speechRun = 0, quietSince = 0;
-    const began = Date.now();
-    const finish = reason => {
-      if (stopRequested || settled) return;
-      stopRequested = true;
-      stopReason = reason;
-      clearInterval(timer);
-      clearTimeout(timer);
-      try { if (recorder?.state !== "inactive") recorder.stop(); }
-      catch { settled = true; resolve(reason || {error:"recording-failed"}); }
-    };
-    cancelRecording = () => finish({cancelled:true});
-    try {
-      recorder = new MediaRecorder(stream, {mimeType:type});
-      if (window.AudioContext || window.webkitAudioContext) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioCtx();
-        const source = audioContext.createMediaStreamSource(stream);
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        source.connect(analyser);
-      }
-      recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
-      recorder.onerror = () => finish({error:"recording-failed"});
-      recorder.onstop = async () => {
-        clearInterval(timer);
-        clearTimeout(timer);
-        if (cancelRecording) cancelRecording = null;
-        try { await audioContext?.close(); } catch {}
-        if (stopReason?.cancelled || stopReason?.error) { settled = true; resolve(stopReason); return; }
-        if (!speechDetected) { settled = true; resolve({error:"no-speech"}); return; }
-        const blob = new Blob(chunks, {type:recorder.mimeType || type});
-        if (!blob.size) { settled = true; resolve({error:"empty-audio"}); return; }
-        const durationMs = Math.min(Date.now() - began,15_000);
-        el("audio-status").textContent = "Transcribing this short microphone clip with Qwen…";
-        try { settled = true; resolve(await transcribeClip(blob,durationMs)); }
-        catch (error) { settled = true; resolve({error:"qwen-asr-error", detail:providerError(error)}); }
-      };
-      recorder.start(150);
-      el("audio-status").textContent = "Qwen STT is listening. Speak your reply now…";
-      if (!analyser) {
-        timer = setTimeout(() => finish({error:"audio-meter-unavailable"}), 100);
-        return;
-      }
-      const frame = new Float32Array(analyser.fftSize);
-      timer = setInterval(() => {
-        const elapsed = Date.now() - began;
-        if (elapsed >= 15_000) { finish({}); return; }
-        analyser.getFloatTimeDomainData(frame);
-        let energy = 0;
-        for (const sample of frame) energy += sample * sample;
-        const level = Math.sqrt(energy / frame.length);
-        if (elapsed < 350 && !speechDetected) {
-          noiseFloor = (noiseFloor * baselineSamples + level) / (baselineSamples + 1);
-          baselineSamples++;
-        }
-        const threshold = Math.max(0.009, noiseFloor * 2.15);
-        if (level >= threshold) {
-          speechRun++;
-          quietSince = 0;
-          if (speechRun >= 2) speechDetected = true;
-        } else {
-          speechRun = 0;
-          if (speechDetected && !quietSince) quietSince = Date.now();
-          if (speechDetected && Date.now() - quietSince >= 950) { finish({}); return; }
-        }
-        if (!speechDetected && elapsed >= 8_000) finish({error:"no-speech"});
-      }, 100);
-    } catch {
-      clearInterval(timer);
-      clearTimeout(timer);
-      try { audioContext?.close(); } catch {}
-      if (cancelRecording) cancelRecording = null;
-      settled = true;
-      resolve({error:"recorder-unavailable"});
-    }
-  });
-}
-async function listenForReplyWithQwen(stream) {
-  if (qwenAsrAvailable && stream && window.MediaRecorder) {
-    const result = await recordQwenReply(stream);
-    if (result.cancelled || result.text || result.error === "no-speech") return result;
-    if (!Recognition) return result;
-    el("audio-status").textContent = (result.detail || "Qwen STT is unavailable.") + " Trying browser speech recognition…";
-  }
-  return listenForReply();
 }
 function recognitionError(error) {
   if (error === "not-allowed" || error === "service-not-allowed") {
@@ -354,19 +256,13 @@ async function startVoiceCall() {
     controls();
     return;
   }
-  const canUseQwenAsr = qwenAsrAvailable && window.MediaRecorder && navigator.mediaDevices?.getUserMedia;
-  if (busy || !ready || (!Recognition && !canUseQwenAsr) || (!speech && !fishVoiceAvailable)) return;
+  if (busy || !ready || !Recognition || (!speech && !fishVoiceAvailable)) return;
   busy = true;
   voiceCallActive = true;
   closed = false;
   controls();
   el("audio-status").textContent = "Voice call started. Speak after each prompt.";
-  let microphone;
   try {
-    if (canUseQwenAsr) {
-      try { microphone = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
-      catch { el("audio-status").textContent = Recognition ? "Qwen mic capture is unavailable; using browser speech recognition." : "Allow microphone access, connect a microphone, and try again."; }
-    }
     if (!voiceCallActive) return;
     const first = await request("new");
     show(first, undefined, false);
@@ -375,7 +271,7 @@ async function startVoiceCall() {
     while (voiceCallActive && !closed) {
       await speakNow(prompt);
       if (!voiceCallActive || closed) break;
-      const result = await listenForReplyWithQwen(microphone);
+      const result = await listenForReply();
       if (result.cancelled || !voiceCallActive) break;
       if (result.error || !result.text.trim()) {
         if (result.error && !["no-speech","aborted"].includes(result.error)) {
@@ -401,7 +297,6 @@ async function startVoiceCall() {
     const detail = providerError(error);
     if (voiceCallActive) el("audio-status").textContent = "Voice call stopped: " + detail;
   } finally {
-    if (microphone) microphone.getTracks().forEach(track => track.stop());
     voiceCallActive = false;
     stopAudio();
     busy = false;
@@ -459,25 +354,18 @@ el("example").onclick = () => task(async () => {
   }
 });
 el("mic").onclick = async () => {
-  if (listening || cancelRecording) { stopListening(); return; }
-  const canUseQwenAsr = qwenAsrAvailable && window.MediaRecorder && navigator.mediaDevices?.getUserMedia;
-  if (busy || !ready || (!Recognition && !canUseQwenAsr)) return;
+  if (listening) { stopListening(); return; }
+  if (busy || !ready || !Recognition) return;
   stopSpeech();
   el("mic").textContent = "Stop listening";
   el("audio-status").textContent = "Listening for your reply…";
-  let microphone;
   let result;
   try {
-    if (canUseQwenAsr) {
-      try { microphone = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
-      catch { if (!Recognition) throw new Error("Allow microphone access and try again."); }
-    }
-    result = await listenForReplyWithQwen(microphone);
+    result = await listenForReply();
   } catch (error) {
     const detail = providerError(error);
-    result = {error:error.name === "NotAllowedError" ? "not-allowed" : "qwen-error", detail:error.name === "NotAllowedError" ? "Allow microphone access for this site, reload, and try again." : detail};
+    result = {error:error.name === "NotAllowedError" ? "not-allowed" : "recognition-error", detail:error.name === "NotAllowedError" ? "Allow microphone access for this site, reload, and try again." : detail};
   } finally {
-    microphone?.getTracks().forEach(track => track.stop());
     el("mic").textContent = "Use mic for one reply";
   }
   if (result.cancelled) { el("audio-status").textContent = "Listening stopped."; return; }
@@ -510,27 +398,20 @@ el("run").onclick = () => task(async () => {
   }
   el("results").replaceChildren(cards,node("h3","Failed cases"),list);
 });
-if (!Recognition && !(qwenAsrAvailable && window.MediaRecorder)) el("audio-status").textContent="Speech recognition is unavailable in this browser. Typed replies work.";
+if (!Recognition) el("audio-status").textContent="Speech recognition is unavailable in this browser. Typed replies work.";
 const startupHint = setTimeout(() => {
   if (!ready) status("The first load can take a minute. If this message stays here, refresh the page or try the local demo.");
 }, 20_000);
 try {
   await reset(false);
-  const [tts, asr, qwen] = await Promise.all([
-    fetch("/api/voice/tts", {cache:"no-store"}).catch(() => null),
-    fetch("/api/voice/asr", {cache:"no-store"}).catch(() => null),
-    fetch("/api/voice/qwen", {cache:"no-store"}).catch(() => null)
-  ]);
-  if (tts?.ok) fishVoiceAvailable = (await tts.json()).available === true;
-  if (asr?.ok) qwenAsrAvailable = (await asr.json()).available === true;
-  if (qwen?.ok) qwenReplyAvailable = (await qwen.json()).available === true;
+  try {
+    const tts = await fetch("/api/voice/tts", {cache:"no-store"});
+    if (tts.ok) fishVoiceAvailable = (await tts.json()).available === true;
+  } catch {}
   ready = true;
-  status(qwenAsrAvailable ? "Ready · V2 · Qwen transcription" : Recognition ? "Ready · V2 · Browser speech recognition" : fishVoiceAvailable ? "Ready · V2 · Fish Audio voice" : "Ready · V2 Python build");
+  status(Recognition ? "Ready · V2 · Browser speech recognition · Local Qwen replies" : fishVoiceAvailable ? "Ready · V2 · Fish Audio voice" : "Ready · V2 Python build");
   if (!speech && !fishVoiceAvailable && Recognition) el("audio-status").textContent="Speech playback is unavailable in this browser. Typed replies work.";
-  else if (qwenAsrAvailable && qwenReplyAvailable) el("audio-status").textContent="Qwen handles transcription and unrecognized questions only; normal account services remain scripted.";
-  else if (qwenAsrAvailable) el("audio-status").textContent="Qwen transcription is enabled; unrecognized questions use the scripted fallback.";
-  else if (qwenReplyAvailable) el("audio-status").textContent="Browser speech recognition is active; Qwen answers only unrecognized questions.";
-  else if (Recognition) el("audio-status").textContent="Browser speech recognition is active. Qwen is not configured yet.";
+  else if (Recognition) el("audio-status").textContent="Browser speech recognition handles the mic; Qwen runs locally only for unrecognized questions.";
 } catch (err) {status(err.message);}
 finally {clearTimeout(startupHint);}
 busy = false;controls();
