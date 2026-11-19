@@ -381,22 +381,66 @@ el("mic").onclick = async () => {
 function node(tag,text,className) {
   const n=document.createElement(tag);n.textContent=text;if(className)n.className=className;return n;
 }
+let catalog = [];
+let caseResults = new Map();
+function renderCaseList() {
+  const query = (el("case-search").value || "").trim().toLowerCase();
+  const visible = catalog.filter(item => [item.id,item.title,item.story,item.kind,item.expected,item.reason,...item.turns].some(value => String(value).toLowerCase().includes(query)));
+  const list = node("div", "", "case-list-inner");
+  for (const item of visible) {
+    const details = document.createElement("details");
+    details.className = "test-case";
+    const summary = document.createElement("summary");
+    summary.append(node("span", item.id, "case-id"), node("span", item.title, "case-title"),
+      node("span", item.kind === "golden" ? "Golden" : "Scenario", "case-kind"));
+    const results = caseResults.get(item.id);
+    if (results) {
+      const badges = node("span", "", "case-badges");
+      for (const version of ["V1","V2"]) {
+        const outcome = results[version];
+        badges.append(node("span", version + " " + (outcome?.passed ? "PASS" : "FAIL"), "result-badge " + (outcome?.passed ? "pass" : "fail")));
+      }
+      summary.append(badges);
+    }
+    details.append(summary);
+    const body = node("div", "", "case-body");
+    body.append(node("p", "User story " + item.story + " · " + (item.kind === "golden" ? "Golden case" : "Scenario case"), "case-meta"));
+    body.append(node("h4", "Test inputs"));
+    const turns = node("ol", "", "case-turns");
+    for (const turn of item.turns) turns.append(node("li", turn));
+    body.append(turns, node("h4", "Expected behavior"), node("p", item.expected, "case-expected"));
+    if (item.reason) body.append(node("p", "Expected outcome: " + item.reason, "case-meta"));
+    if (results) {
+      body.append(node("h4", "Run results"));
+      for (const version of ["V1","V2"]) {
+        const outcome = results[version];
+        body.append(node("p", version + ": " + (outcome?.passed ? "Passed" : "Failed") + (outcome?.failed?.length ? " · Checks: " + outcome.failed.join(", ") : ""), "case-result-line " + (outcome?.passed ? "pass-text" : "fail-text")));
+        if (outcome && !outcome.passed) body.append(node("p", version + " observed: " + outcome.actual, "case-meta"));
+      }
+    }
+    details.append(body); list.append(details);
+  }
+  if (!visible.length) list.append(node("p", "No matching test cases.", "details"));
+  el("case-list").replaceChildren(list);
+}
+el("case-search").addEventListener("input", renderCaseList);
 el("run").onclick = () => task(async () => {
-  stopAudio();el("results").replaceChildren(node("p","Running both Python builds…"));
+  stopAudio();caseResults = new Map();el("results").replaceChildren(node("p","Running both Python builds…"));
   const runs=await request("suite"), cards=node("div","","cards");
-  const list=node("div","");
   for (const result of runs) {
     const box=node("section","","metric");
     box.append(node("p",result.version+" · "+(result.version==="V1"?"baseline":"revised")),node("strong",result.passed+" / "+result.total),
       node("p",((100*result.passed/result.total).toFixed(1))+"% passed"));
     cards.append(box);
-    for (const failure of result.failed) {
-      const row=node("div","","case");
-      row.append(node("b",result.version+" · "+failure.id+"   "),document.createTextNode(failure.title),
-        node("p","Observed reply: "+failure.actual,"details"));list.append(row);
+    for (const outcome of result.cases) {
+      const entry = caseResults.get(outcome.id) || {};
+      entry[result.version] = outcome;
+      caseResults.set(outcome.id, entry);
     }
   }
-  el("results").replaceChildren(cards,node("h3","Failed cases"),list);
+  renderCaseList();
+  el("case-catalog").open = true;
+  el("results").replaceChildren(cards,node("h3","Case-by-case results"),node("p","Open any case below to see its transcript, expected behavior, and V1/V2 result."));
 });
 if (!Recognition) el("audio-status").textContent="Speech recognition is unavailable in this browser. Typed replies work.";
 const startupHint = setTimeout(() => {
@@ -409,6 +453,13 @@ try {
     if (tts.ok) fishVoiceAvailable = (await tts.json()).available === true;
   } catch {}
   ready = true;
+  try {
+    catalog = await request("catalog");
+    el("catalog-count").textContent = `Browse all ${catalog.length} test cases (${catalog.filter(c => c.kind === "golden").length} golden · ${catalog.filter(c => c.kind === "scenario").length} scenarios)`;
+    renderCaseList();
+  } catch {
+    el("case-list").replaceChildren(node("p","The test case list could not load. Refresh the page to try again.","details"));
+  }
   status(Recognition ? "Ready · V2 · Browser speech recognition · Local Qwen replies" : fishVoiceAvailable ? "Ready · V2 · Fish Audio voice" : "Ready · V2 Python build");
   if (!speech && !fishVoiceAvailable && Recognition) el("audio-status").textContent="Speech playback is unavailable in this browser. Typed replies work.";
   else if (Recognition) el("audio-status").textContent="Browser speech recognition handles the mic; Qwen runs locally only for unrecognized questions.";

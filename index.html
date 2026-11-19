@@ -27,6 +27,9 @@
 <section id="suite-panel" hidden>
 <div class="card suite"><div class="cardHead"><div><p class="kicker">BROWSER EXECUTION</p><h2>Transcript regression suite</h2></div><button id="run" class="primary" disabled>Run both versions</button></div>
 <p>The browser executes both packaged Python builds against the same 29 golden and 27 scenario transcripts. Google CX Agent Studio Evaluate is a separate assessment.</p>
+<details id="case-catalog" class="catalog"><summary><span id="catalog-count">Browse all 56 test cases</span><span class="caption">Open a case to see its test inputs and expected behavior</span></summary>
+<label class="case-search-label" for="case-search">Find a case</label><input id="case-search" class="case-search" type="search" placeholder="Search by title, ID, or user story…" autocomplete="off">
+<div id="case-list" class="case-list" aria-live="polite"><p class="details">Loading the case list…</p></div></details>
 <div id="results" aria-live="polite"></div>
 </div>
 </section>

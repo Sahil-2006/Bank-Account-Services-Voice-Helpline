@@ -47,8 +47,20 @@ def respond(action, text):
         for version, (cls, _) in builds.items():
             cases = [run(c, desk_type=cls) for c in CASES]
             results.append({"version":version,"total":len(cases),"passed":sum(c["passed"] for c in cases),
-                            "failed":[{"id":c["id"],"title":c["title"],"actual":c["actual"]} for c in cases if not c["passed"]]})
+                            "cases":[{
+                                "id":result["id"], "title":result["title"],
+                                "kind":definition["kind"], "story":result["story"],
+                                "turns":definition["turns"], "expected":definition["expected"],
+                                "reason":definition["reason"], "passed":result["passed"],
+                                "failed":result["failed"], "actual":result["actual"]
+                            } for definition, result in zip(CASES, cases)]})
         return json.dumps(results)
+    if action == "catalog":
+        return json.dumps([{
+            "id":case["id"], "title":case["title"], "kind":case["kind"],
+            "story":case["story"], "turns":case["turns"],
+            "expected":case["expected"], "reason":case["reason"]
+        } for case in CASES])
     if action == "new":
         desk = new_call()
         reply = WELCOME
