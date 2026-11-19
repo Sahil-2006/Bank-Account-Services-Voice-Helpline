@@ -13,14 +13,16 @@ from helpline.tools import fresh
 from evaluation.run import CALENDAR
 
 TOOLS = {
-    "verify_identity":("Collect and confirm the three identity fields. Use during all root verification steps.",("id","dob","ending","confirm_id")),
+    "verify_identity":("Collect and confirm existing-caller details or advance the simulated account-opening flow. Never collect real government-ID numbers.",("id","dob","ending","confirm_id","open_name","open_phone","open_dob","open_aadhaar","open_pan","open_confirm")),
     "select_service":("Capture the intent from the latest caller turn and check the verified account. Return the next spoken response.",("service",)),
     "statement_service":("Confirm duration, determine delivery and quote the statement fee for a verified caller.",("months","confirm_period","delivery")),
     "limit_service":("Capture the channel, transfer date and amount and check the verified account's limit.",("channel","date","amount")),
+    "transaction_service":("Run only a simulated deposit or withdrawal in the current demo session. It never moves or stores real money.",("demo_service","demo_tx_amount","demo_tx_confirm")),
 }
 VARS = {**fresh(),"transfer_date":"","input_channel":"","last_invocation":"","last_result":{},"logged":False,"calendar_unavailable":False}
+PRIVATE_RESPONSE = "Please keep card, Aadhaar, PAN and PIN numbers private. This demo does not need actual identity numbers."
 GUARDS = [
- ("Private identifiers","contentFilter",{"matchType":"REGEXP_MATCH","bannedContentsInUserInput":[r"\b(?:[0-9][ ,\-]*){12,19}\b",r"(?i)\b(?:pin|aadhaar|aadhar|card)\b.{0,24}(?:[0-9]|zero|one|two|three|four|five|six|seven|eight|nine)"]},PRIVATE),
+ ("Private identifiers","contentFilter",{"matchType":"REGEXP_MATCH","bannedContentsInUserInput":[r"\b(?:[0-9][ ,\-]*){12,19}\b",r"(?i)\b(?:pin|aadhaar|aadhar|pan|card)\b.{0,24}(?:[0-9]|zero|one|two|three|four|five|six|seven|eight|nine)",r"(?i)\b[A-Z]{5}[0-9]{4}[A-Z]\b"]},PRIVATE_RESPONSE),
  ("Crisis support","llmPolicy",{"policyScope":"USER_QUERY","allowShortUtterance":True,"prompt":"Trigger for personal present danger of self-harm, suicidal intent or inability to stay safe, including paraphrases. Tiredness or frustration alone is insufficient."},CRISIS),
  ("Grounded account replies","llmPolicy",{"policyScope":"AGENT_RESPONSE","prompt":"Trigger when a reply gives financial advice, reads more than four digits of an account number or states an account amount, fee or limit unsupported by the latest verified tool result. Reading an approved crisis message, a date or a four-digit account ending is permitted."},SAFE),
  ("Harm safety","modelSafety",{"safetySettings":[{"category":"HARM_CATEGORY_DANGEROUS_CONTENT","threshold":"BLOCK_MEDIUM_AND_ABOVE"}]},SAFE),
@@ -84,7 +86,7 @@ def safe_readers():
 def instruction(sub, team, child):
     shared = (
         "\nConstraints\nSpeak in short sentences. Speak an amount as rupees, dates naturally and ID digits in small groups. "
-        "Never ask for card, Aadhaar, PIN or full account numbers. Say only approved tool facts. "
+        "Never ask for actual card, Aadhaar, PAN, PIN or full account numbers. Say only approved tool facts. "
         "On silence gently repeat the active prompt. On barge-in stop speaking and listen. "
         "A request for a person or standalone zero is immediate. For crisis say exactly this and route to a person immediately:\n"+CRISIS+
         "\nHandle these interruptions using the current stage tool. Never repeat a disclaimer or continue a closed call. "
@@ -95,13 +97,17 @@ def instruction(sub, team, child):
                 "Task\nOn entry pass on an existing response if this turn was already handled. On a fresh service selection call {@TOOL: lookup_verified_account}, "
                 "then {@TOOL: select_service}. For statements and confirmed balance or limit requests {@TOOL: read_account_status} is available for checking status. "
                 "At months, confirm_period or delivery use {@TOOL: statement_service}. At channel, date or amount use {@TOOL: limit_service}. "
+                "At demo_service, demo_tx_amount or demo_tx_confirm use {@TOOL: transaction_service}; these fictional transactions affect only the current demo session. "
                 "Use exactly one stage-changing tool per caller turn. Speak its say field. It handles the calendar and handoff internally. "
                 "If lookup returns found false, still call select_service to record the technical handoff. Never ask a caller to invent missing values.\n"
                 "Example\nCaller: two. Desk: How many months should the statement cover? Caller: twelve. Desk: You asked for twelve months. Is that right?"+shared)
     return ("Role\nYou are the Harbour Trust root voice desk.\nPersona\nPatient, discreet and warm.\n"
-            "Context\nA fictional account holder is calling. {verified} and {stage} carry the trusted session state.\n"
+            "Context\nA fictional account holder is calling. {verified}, {stage} and {demo_customer_id} carry session state.\n"
             "Task\nStart with: Welcome to Harbour Trust. What is your customer ID? For each new caller turn use {@TOOL: verify_identity}. "
+            "If the caller asks to open an account, explain this is a simulation, ask only for fictional sample details, accept ‘demo verified’ for simulated Aadhaar and PAN checks, and never request government-ID numbers. "
+            "Never claim a real bank account or KYC application was created.\n"
             "Speak the returned say field once. After verification route to {@AGENT: "+child+"}, forwarding the stage and existing reply. "
+            "After simulated account creation, route to the account service when demo_customer_id is set and stage is demo_service. "
             "For a general service question give a one-sentence description and return to the prompt. Offer a person for off-topic requests or financial advice. "
             "Do not ask for confirmation of a human handoff.\nExample\nCaller: representative. Desk: I'm connecting you with a person now."+shared)
 
@@ -180,7 +186,7 @@ def build(team,version,out):
         put(crisis_hook,terminal_callback())
         put(callback,AFTER);put(path,instruction(sub,team,child))
         obj("agents",agent,{"displayName":agent,"instruction":path,"childAgents":[] if sub else [child],
-            "tools":(["select_service","lookup_verified_account","read_account_status","statement_service","limit_service",calendar_name] if sub else ["verify_identity"]),
+            "tools":(["select_service","lookup_verified_account","read_account_status","statement_service","limit_service","transaction_service",calendar_name] if sub else ["verify_identity"]),
             "afterToolCallbacks":[{"pythonCode":callback,"description":"Log a terminal transfer once, with routing metadata only."}],
             "afterAgentCallbacks":[{"pythonCode":crisis_hook,"description":"Record a human handoff on an exact crisis reply even if an immediate-response guardrail supplied the words."}]})
     for n,k,config,outcome in GUARDS:

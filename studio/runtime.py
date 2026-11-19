@@ -30,6 +30,11 @@ def _advance(ctx, allowed):
         return tools.uk_bank_holidays({})
     desk = Desk(DIRECTORY, state=current, calendar=calendar)
     reply = desk.turn(_utterance(ctx))
+    if current.get("demo_record_ready"):
+        from secrets import token_hex
+        current.update(demo_customer_id="HTD-"+token_hex(6).upper(),demo_balance=0,
+                       demo_balance_active=True,demo_record_ready=False)
+        reply += " Demo customer ID: "+current["demo_customer_id"]+". This is simulated; no real bank account or KYC application was created."
     for k,v in current.items():
         ctx.state[k] = v
     result = {"say":reply,"stage":current["stage"],"verified":current["verified"],"handoff":current["handoff"]}

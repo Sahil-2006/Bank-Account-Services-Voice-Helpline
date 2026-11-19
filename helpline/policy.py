@@ -45,7 +45,9 @@ def classify(text):
     if re.fullmatch(r"(?:please\s+)?(?:0|zero)[.!?]?", t) or re.search(r"\b(?:agent|representative|someone|human|real person|a person)\b", t):
         return "human"
     numbers = number_tokens(t)
-    if re.search(r"(?<!\d)(?:\d[\s,-]*){12,}(?!\d)", numbers) or (re.search(r"\b(?:pin|card|aadhaar|aadhar)\b", t) and re.search(r"\d", numbers)):
+    if (re.search(r"(?<!\d)(?:\d[\s,-]*){12,}(?!\d)", numbers) or
+        (re.search(r"\b(?:pin|card|aadhaar|aadhar|pan)\b", t) and re.search(r"\d", numbers)) or
+        re.fullmatch(r"[A-Z]{5}\d{4}[A-Z]", t.upper())):
         return "private"
     if re.search(r"\b(?:ignore|override|disregard)\b.*\b(?:instructions|rules|system)\b|\breveal (?:the |your )?system prompt\b", t):
         return "prompt"
@@ -58,7 +60,11 @@ def classify(text):
 def intent_of(text):
     t = clean(text).strip(".!?")
     keypad = {"one":"balance","1":"balance","two":"statement","2":"statement","three":"limit","3":"limit"}
-    found = [i for i, pattern in (("balance",r"\bbalance\b"),("statement",r"\bstatements?\b"),("limit",r"\blimits?\b")) if re.search(pattern,t)]
+    found = [i for i, pattern in (("balance",r"\bbalance\b"),("statement",r"\bstatements?\b"),("limit",r"\blimits?\b"),
+                                  ("deposit",r"\bdeposit\b"),("withdraw",r"\bwithdraw(?:al)?\b")) if re.search(pattern,t)]
+    transactions = [item for item in found if item in ("deposit","withdraw")]
+    if len(transactions) == 1:
+        return transactions[0]
     return keypad.get(t, found[0] if len(found) == 1 else "")
 
 def resolve_channel(name, transfer_date):

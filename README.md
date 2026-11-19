@@ -36,6 +36,10 @@ powershell.exe -NoProfile -File voice/start.ps1
 
 The hosted demo reads `FISH_AUDIO_API_KEY` from the Vercel **Production** environment for Fish Audio speech synthesis. The key is never stored in source or exposed to the browser. To set or rotate it, use Vercel Project Settings → Environment Variables. If unavailable, browser speech synthesis is used. Qwen fallback replies use the open `Qwen3-0.6B` model in the browser through its ONNX conversion. The first unrecognized question downloads the model files from Hugging Face; generation then runs on the visitor's device without sending the question to a model API. No DashScope key or per-request Qwen API billing is used.
 
+The **Open a demo account** conversation is a simulation. It accepts fictional name, phone and date values; Aadhaar and PAN checks are simulated with the words “demo verified,” and real government-ID numbers are rejected. The browser assigns an `HTD-...` demo customer ID. Demo deposits and withdrawals only change the fictional balance in the current session; no real funds move. Entered identity values are not kept in session state or written to storage.
+
+When run locally with `RUN_DEMO.bat`, SQLite stores only the generated demo customer ID, `demo_created` status, and timestamp in `.local/desk.sqlite3`. It never stores name, phone, date of birth, Aadhaar, PAN, or balance. The Vercel version does not persist demo IDs: Vercel Functions have a read-only filesystem with only temporary `/tmp` scratch space, so a local SQLite file is not durable there. [Vercel runtime filesystem documentation](https://vercel.com/docs/functions/runtimes).
+
 ## What the evidence shows
 
 | Check | Result |

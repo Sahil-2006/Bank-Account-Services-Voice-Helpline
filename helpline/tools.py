@@ -5,7 +5,9 @@ from .policy import NOW, TECH, as_digits, charge, compact_digits, positive, reso
 def fresh():
     return dict(verified=False, customer_id="", account_type="", intent_tag="", channel="",
                 attempts=0, unclear=0, now_override=NOW, handoff={}, pending={}, quote={},
-                stage="id", candidate="", ending="", dob="", retry_stage="", period="", delivery="", offered=False)
+                stage="id", candidate="", ending="", dob="", retry_stage="", period="", delivery="", offered=False,
+                demo_record_ready=False, demo_customer_id="", demo_balance=0, demo_tx_amount="",
+                demo_return_stage="demo_service", demo_balance_active=False)
 
 def finish(s, destination, reason, channel=""):
     if not s["handoff"]:

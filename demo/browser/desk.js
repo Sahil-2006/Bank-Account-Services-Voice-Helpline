@@ -59,7 +59,7 @@ function controls() {
   const voiceInputAvailable = Boolean(Recognition);
   for (const id of ["reply","send","mic"]) el(id).disabled = !ready || busy || closed;
   el("mic").disabled ||= !voiceInputAvailable;
-  for (const id of ["example","reset","run"]) el(id).disabled = !ready || busy;
+  for (const id of ["example","open-account","reset","run"]) el(id).disabled = !ready || busy;
   el("read").disabled = !voiceOutputAvailable || busy || voiceCallActive;
   el("voice-call").disabled = !ready || !voiceInputAvailable || !voiceOutputAvailable || (busy && !voiceCallActive) || (closed && !voiceCallActive);
   el("voice-call").textContent = voiceCallActive ? "End voice call" : "Start voice call";
@@ -222,6 +222,31 @@ async function listenForReply() {
 }
 async function requestTurn(text) {
   const result = await request("turn",text);
+  if (result.demoRecordReady) {
+    const bytes = new Uint8Array(6);
+    crypto.getRandomValues(bytes);
+    const customerId = "HTD-" + Array.from(bytes, byte => byte.toString(16).padStart(2,"0")).join("").toUpperCase();
+    let saved = false;
+    try {
+      const response = await fetch("/api/demo-account", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({customerId})
+      });
+      if (response.ok) saved = (await response.json()).saved === true;
+    } catch {}
+    let registration;
+    try { registration = await request("demo_register",customerId); } catch {}
+    result.reply = (registration?.reply || ("Demo customer ID: "+customerId+".")) + " This is a simulation; no real bank account or KYC application was created.";
+    result.reply += saved
+      ? " A local SQLite row with this demo ID and status was saved. No personal details were stored."
+      : " The Vercel demo does not persist this ID. Run the local demo to save the demo ID and status in SQLite.";
+    if (registration) {
+      result.stage = registration.stage;
+      result.handoff = registration.handoff;
+      result.private = false;
+    }
+    result.demoRecordReady = false;
+  }
   if (!result.unrecognized || result.private || /\b(?:\d{4,}|\d{3}[- ]\d{3}[- ]\d{4}|\S+@\S+\.\S+)\b/.test(text)) return result;
   el("audio-status").textContent = "Loading local Qwen for this unrecognized question…";
   try {
@@ -305,7 +330,7 @@ async function startVoiceCall() {
   }
 }
 function show(result, caller, read = true) {
-  if (caller !== undefined) message("Caller", result.private ? "[Private digits withheld]" : caller);
+  if (caller !== undefined) message("Caller", result.private ? "[Personal details withheld]" : caller);
   message("Voice desk",result.reply);
   if (read) speak(result.reply);
   const route = result.handoff;
@@ -352,6 +377,12 @@ el("example").onclick = () => task(async () => {
   for (const value of ["HT4102","14 June 1993","0042","yes","balance"]) {
     show(await request("turn",value),value,value === "balance");
   }
+});
+el("open-account").onclick = () => task(async () => {
+  await reset(false);
+  const opening = "I want to open a new demo account.";
+  show(await requestTurn(opening),opening,false);
+  el("reply").focus();
 });
 el("mic").onclick = async () => {
   if (listening) { stopListening(); return; }
