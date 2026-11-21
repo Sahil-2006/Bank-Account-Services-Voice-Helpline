@@ -16,7 +16,7 @@ Capstone Project 10 implements a fictional bank helpline for balances, statement
 
 ## Run one complete call
 
-On Windows, double-click [RUN_DEMO.bat](RUN_DEMO.bat) to open the browser desk locally. Use the “Run example call” button for the balance handoff, or choose “Regression suite” and run both versions. Keep the server window open during the demo and press Ctrl+C in it to stop the server. Double-click [RUN_CHECKS.bat](RUN_CHECKS.bat) to run all four local check groups.
+On Windows, double-click [RUN_DEMO.bat](RUN_DEMO.bat) to open the browser desk locally. The local server listens on loopback and exposes only the demo assets, exported packages, and project report. Use the “Run example call” button for the balance handoff, or choose “Regression suite” and run both versions. Keep the server window open during the demo and press Ctrl+C in it to stop the server. Double-click [RUN_CHECKS.bat](RUN_CHECKS.bat) to run all four local check groups.
 
 For a presentation sequence, expected outputs, and the Studio-only items that remain blocked, see the [step-by-step demo guide](DEMO_GUIDE.md).
 
